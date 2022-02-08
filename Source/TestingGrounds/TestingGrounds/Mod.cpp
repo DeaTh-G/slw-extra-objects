@@ -9,5 +9,7 @@ extern "C"
 		MessageBox(NULL, L"AAAAAAAAAA", NULL, MB_ICONERROR);
 
 		TestingGrounds::CSetObjectFactory::InstallPatches();
+		TestingGrounds::StageDataInitializer::InstallPatches();
+		TestingGrounds::CStateBase::InstallPatches();
 	}
 }
