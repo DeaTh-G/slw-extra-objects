@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "Patches.h"
 
-static app::CSetObjClass SUPER_RING_SUPER_CLASS { app::CSetObjClass::Create<app::ObjSuperRingSuper, app::ObjSuperRingSuperInfo>("SuperRingSuper", "OBJECT", "Item") };
+static app::CSetObjClass SUPER_RING_SUPER_CLASS{ app::CSetObjClass::Create<app::ObjSuperRingSuper, app::ObjSuperRingSuperInfo>("SuperRingSuper", "OBJECT", "Item", app::paramMap_SuperRingSuper) };
+static app::CSetObjClass DASH_RING_CLASS{ app::CSetObjClass::Create<app::ObjDashRing, app::ObjDashRingInfo>("DashRing", "OBJECT", "Gimmick", app::paramMap_DashRing) };
 
 HOOK(app::CSetObjectFactory*, __fastcall, h_CSetObjectFactoryCtor, ASLR(0x008443D0), app::CSetObjectFactory* This, void* edx)
 {
@@ -9,6 +10,7 @@ HOOK(app::CSetObjectFactory*, __fastcall, h_CSetObjectFactoryCtor, ASLR(0x008443
 
 	This->BeginRegistration();
 	This->RegisterClass(&SUPER_RING_SUPER_CLASS);
+	This->RegisterClass(&DASH_RING_CLASS);
 	This->EndRegistration();
 
 	return This;

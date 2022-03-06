@@ -3,6 +3,11 @@
 
 namespace app
 {
+    struct SuperRingSuperParam
+    {
+        float m_Scale{};
+    };
+
     class ObjSuperRingSuperInfo : public CObjInfo
     {
     public:
@@ -23,7 +28,14 @@ namespace app
 
     class ObjSuperRingSuper : public CSetObjectListener
     {
+        float m_Time;
+
     public:
+        ObjSuperRingSuper()
+        {
+            ObjUtil::SetPropertyLockonTarget(this);
+        }
+
         void AddCallback(GameDocument& document) override
         {
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
@@ -32,6 +44,7 @@ namespace app
             fnd::GOComponent::Create<game::GOCSound>(*this);
             
             ObjSuperRingSuperInfo* info = ObjUtil::GetObjectInfo<ObjSuperRingSuperInfo>(document, "ObjSuperRingSuperInfo");
+            SuperRingSuperParam* param = reinterpret_cast<SuperRingSuperParam*>(m_pAdapter->GetData());
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -42,6 +55,9 @@ namespace app
                 description.m_Model = info->m_Model;
 
                 gocVisual->Setup(description);
+
+                csl::math::Vector3 scale = csl::math::Vector3(param->m_Scale, param->m_Scale, param->m_Scale);
+                TestingGrounds::GOCVisualTransformed::SetLocalScale(gocVisual, &scale);
             }
 
             auto ringManager = document.GetService<Gimmick::CRingManager>();
@@ -50,13 +66,18 @@ namespace app
             auto gocCollider = GetComponent<game::GOCCollider>();
             if (gocCollider)
             {
-                game::GOCCollider::Description description{ 1 };
+                game::GOCCollider::Description description{ 2 };
                 gocCollider->Setup(description);
 
                 game::ColliSphereShapeCInfo colliInfo;
                 colliInfo.m_Radius = 5;
                 colliInfo.m_Unk2 |= 1;
+                colliInfo.m_Unk3 = 0x20000;
                 
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, colliInfo);
+                gocCollider->CreateShape(colliInfo);
+
+                colliInfo.m_Unk4 = 0;
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 gocCollider->CreateShape(colliInfo);
             }
@@ -72,10 +93,15 @@ namespace app
             if (PreProcessMessage(msg))
                 return true;
 
-            if (msg.IsOfType<xgame::MsgHitEventCollision>())
+            switch (msg.GetType())
+            {
+            case xgame::MsgHitEventCollision::MessageID:
                 return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
-
-            return CSetObjectListener::ProcessMessage(msg);
+            case xgame::MsgPLGetHomingTargetInfo::MessageID:
+                return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
+            default:
+                return CSetObjectListener::ProcessMessage(msg);
+            }
         }
 
     private:
@@ -99,5 +125,19 @@ namespace app
             Kill();
             return true;
         }
+
+        bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& message)
+        {
+            auto gocTransform = GetComponent<fnd::GOCTransform>();
+            message.m_LockonCount = 1;
+            message.m_CursorPosition = gocTransform->GetLocalPosition();
+
+            return true;
+        }
     };
+
+    static void paramMap_SuperRingSuper(app::SetEd::CResClass rClass)
+    {
+        TestingGrounds::AddParamFloat(rClass, "Scale", "Scale of the object.", 0, 10.0f, 0.0f, 10000.0f, 1.0f);
+    }
 }

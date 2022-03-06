@@ -99,6 +99,9 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>lib/detours.lib;lib/syelog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(OutDir)$(TargetName)$(TargetExt)" "F:\Mods\Sonic Lost World\Testing Grounds" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -121,6 +124,9 @@
       <EnableUAC>false</EnableUAC>
       <AdditionalDependencies>lib/detours.lib;lib/syelog.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(OutDir)$(TargetName)$(TargetExt)" "F:\Mods\Sonic Lost World\Testing Grounds" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -157,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ObjDashRing.h" />
     <ClInclude Include="Patches.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ObjSuperRingSuper.h" />
