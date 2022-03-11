@@ -29,8 +29,8 @@ namespace app
         inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
         inline static size_t ms_AnimCount = ARRAYSIZE(ms_AnimationNames);
 
-        hh::gfx::res::ResModel m_Models[sizeof(ms_ModelNames) / sizeof(ms_ModelNames[0])]{};
-        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[sizeof(ms_AnimationNames) / sizeof(ms_AnimationNames[0])]{};
+        hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
+        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[ARRAYSIZE(ms_ModelNames)]{};
 
     protected:
         void Initialize(GameDocument& document) override
@@ -92,8 +92,7 @@ namespace app
                 colliInfo.m_Size = csl::math::Vector3(14.6f, 0.85f, 19.6f);
                 colliInfo.m_Unk2 |= 1;
 
-                csl::math::Vector3 position(0.0f, 0.0f, 19.0f);
-                colliInfo.SetLocalPosition(position);
+                colliInfo.SetLocalPosition({ 0.0f, 0.0f, 19.0f });
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 gocCollider->CreateShape(colliInfo);

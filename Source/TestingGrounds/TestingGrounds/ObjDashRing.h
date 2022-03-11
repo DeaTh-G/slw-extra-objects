@@ -30,9 +30,9 @@ namespace app
         inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
         inline static size_t ms_AnimCount = ARRAYSIZE(ms_AnimationNames);
 
-        hh::gfx::res::ResModel m_Models[sizeof(ms_ModelNames) / sizeof(ms_ModelNames[0])]{};
-        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[sizeof(ms_ModelNames) / sizeof(ms_ModelNames[0])]{};
-        hh::gfx::res::ResAnimMaterial m_MaterialAnimations[sizeof(ms_AnimationNames) / sizeof(ms_AnimationNames[0])]{};
+        hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
+        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[ARRAYSIZE(ms_ModelNames)]{};
+        hh::gfx::res::ResAnimMaterial m_MaterialAnimations[ARRAYSIZE(ms_ModelNames)]{};
 
     protected:
         void Initialize(GameDocument& document) override
