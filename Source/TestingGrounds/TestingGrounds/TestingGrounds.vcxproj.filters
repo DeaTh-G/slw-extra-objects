@@ -36,6 +36,12 @@
     <ClInclude Include="ObjDashRing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ObjJumpPanel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjJumpBoard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">

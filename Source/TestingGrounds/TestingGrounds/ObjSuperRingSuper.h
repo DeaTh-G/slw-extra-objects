@@ -3,7 +3,7 @@
 
 namespace app
 {
-    struct SuperRingSuperParam
+    struct SSuperRingSuperParam
     {
         float m_Scale{};
     };
@@ -11,7 +11,7 @@ namespace app
     class ObjSuperRingSuperInfo : public CObjInfo
     {
     public:
-        hh::gfx::res::ResModel m_Model;
+        hh::gfx::res::ResModel m_Model{};
 
     protected:
         void Initialize(GameDocument& document) override
@@ -28,8 +28,6 @@ namespace app
 
     class ObjSuperRingSuper : public CSetObjectListener
     {
-        float m_Time;
-
     public:
         ObjSuperRingSuper()
         {
@@ -43,8 +41,8 @@ namespace app
             fnd::GOComponent::Create<game::GOCEffect>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
             
-            ObjSuperRingSuperInfo* info = ObjUtil::GetObjectInfo<ObjSuperRingSuperInfo>(document, "ObjSuperRingSuperInfo");
-            SuperRingSuperParam* param = reinterpret_cast<SuperRingSuperParam*>(m_pAdapter->GetData());
+            auto pInfo = ObjUtil::GetObjectInfo<ObjSuperRingSuperInfo>(document, "ObjSuperRingSuperInfo");
+            auto pParam = reinterpret_cast<SSuperRingSuperParam*>(m_pAdapter->GetData());
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -52,12 +50,11 @@ namespace app
             if (gocVisual)
             {
                 fnd::GOCVisualModel::Description description {};
-                description.m_Model = info->m_Model;
+                description.m_Model = pInfo->m_Model;
 
                 gocVisual->Setup(description);
 
-                csl::math::Vector3 scale = csl::math::Vector3(param->m_Scale, param->m_Scale, param->m_Scale);
-                TestingGrounds::GOCVisualTransformed::SetLocalScale(gocVisual, &scale);
+                gocVisual->SetLocalScale({ pParam->m_Scale, pParam->m_Scale, pParam->m_Scale });
             }
 
             auto ringManager = document.GetService<Gimmick::CRingManager>();
@@ -97,8 +94,6 @@ namespace app
             {
             case xgame::MsgHitEventCollision::MessageID:
                 return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
-            case xgame::MsgPLGetHomingTargetInfo::MessageID:
-                return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
             default:
                 return CSetObjectListener::ProcessMessage(msg);
             }
@@ -107,31 +102,21 @@ namespace app
     private:
         bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
         {
+            auto gocSound = GetComponent<game::GOCSound>();
+
             xgame::MsgTakeObject takeMsg{ (xgame::MsgTakeObject::EType)19 };
             takeMsg.SetShapeUserID(msg.m_pOther->m_ID);
             SendMessageImm(msg.m_Sender, takeMsg);
             if (!takeMsg.m_Taken)
                 return false;
 
-            auto gocEffect = GetComponent<game::GOCEffect>();
-            if (gocEffect)
-                gocEffect->CreateEffect("ef_ob_com_yh1_ringget_ss");
+            GetComponent<game::GOCEffect>()->CreateEffect("ef_ob_com_yh1_ringget_ss");
 
-            auto gocSound = GetComponent<game::GOCSound>();
-            if (gocSound)
-                gocSound->Play("obj_superring", 0);
+            int deviceTag[3];
+            TestingGrounds::GOCSound::Play3D(gocSound, deviceTag, "obj_superring", 0);
 
             SetStatusRetire();
             Kill();
-            return true;
-        }
-
-        bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& message)
-        {
-            auto gocTransform = GetComponent<fnd::GOCTransform>();
-            message.m_LockonCount = 1;
-            message.m_CursorPosition = gocTransform->GetLocalPosition();
-
             return true;
         }
     };

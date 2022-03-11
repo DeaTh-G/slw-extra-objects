@@ -19,26 +19,34 @@ namespace app
 
     class ObjDashRingInfo : public CObjInfo
     {
+    private:
+        inline static const char* ms_ModelNames[] = { "cmn_obj_dashring", "cmn_obj_rainbowring" };
+        inline static const char* ms_AnimationNames[] = {
+            "cmn_obj_dashring-0000", "cmn_obj_dashring-0001", "cmn_obj_dashring-0002", "cmn_obj_dashring-0003",
+            "cmn_obj_rainbowring-0000", "cmn_obj_rainbowring-0001", "cmn_obj_rainbowring-0002", "cmn_obj_rainbowring-0003"
+        };
+
     public:
-        hh::gfx::res::ResModel m_Models[2]{};
-        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[2]{};
-        hh::gfx::res::ResAnimMaterial m_MaterialAnimations[2]{};
+        inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
+        inline static size_t ms_AnimCount = ARRAYSIZE(ms_AnimationNames);
+
+        hh::gfx::res::ResModel m_Models[sizeof(ms_ModelNames) / sizeof(ms_ModelNames[0])]{};
+        hh::gfx::res::ResAnimTexSrt m_TextureAnimations[sizeof(ms_ModelNames) / sizeof(ms_ModelNames[0])]{};
+        hh::gfx::res::ResAnimMaterial m_MaterialAnimations[sizeof(ms_AnimationNames) / sizeof(ms_AnimationNames[0])]{};
 
     protected:
         void Initialize(GameDocument& document) override
         {
             hh::ut::PackFile packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
 
-            for (size_t i = 0; i < 2; i++)
+            for (size_t i = 0; i < ms_ModelCount; i++)
             {
-                const char* fileName = "cmn_obj_dashring";
-                if (i == 1)
-                    fileName = "cmn_obj_rainbowring";
-
-                m_Models[i] = ObjUtil::GetModelResource(fileName, packFile);
-                m_TextureAnimations[i] = ObjUtil::GetTexSrtAnimationResource(fileName, packFile);
-                m_MaterialAnimations[i] = ObjUtil::GetMaterialAnimationResource(fileName, packFile);
+                m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
+                m_MaterialAnimations[i] = ObjUtil::GetMaterialAnimationResource(ms_ModelNames[i], packFile);
             }
+
+            for (size_t i = 0; i < ms_AnimCount; i++)
+                m_TextureAnimations[i] = ObjUtil::GetTexSrtAnimationResource(ms_AnimationNames[i], packFile);
         }
 
         const char* GetInfoName() override
@@ -49,6 +57,9 @@ namespace app
 
     class ObjDashRing : public CSetObjectListener
     {
+    private:
+        inline static const char* ms_SoundNames[] = { "obj_dashring", "obj_rainbowring" };
+
     protected:
         float m_Time{};
         float m_DoSquash{};
@@ -57,7 +68,6 @@ namespace app
         ObjDashRing()
         {
             SetUpdateFlag(0, true);
-            ObjUtil::SetPropertyLockonTarget(this);
         }
 
         void AddCallback(GameDocument& document) override
@@ -66,8 +76,8 @@ namespace app
             fnd::GOComponent::Create<game::GOCCollider>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
 
-            ObjDashRingInfo* pInfo = ObjUtil::GetObjectInfo<ObjDashRingInfo>(document, "ObjDashRingInfo");
-            SDashRingParam* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
+            auto pInfo = ObjUtil::GetObjectInfo<ObjDashRingInfo>(document, "ObjDashRingInfo");
+            auto pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -75,20 +85,18 @@ namespace app
             if (gocVisual)
             {
                 char type = (char)pParam->m_Type;
+                size_t modelAnimCount = ObjDashRingInfo::ms_AnimCount / ObjDashRingInfo::ms_ModelCount;
 
                 fnd::GOCVisualModel::Description description{};
                 description.m_Model = pInfo->m_Models[type];
 
                 gocVisual->Setup(description);
                 
-                fnd::MatAnimBlenderDesc matAnimDesc{ 1 };
-                auto blender = gocVisual->SetMatAnimBlender(matAnimDesc);
+                gocVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[type], 1 });
 
-                fnd::MatAnimControlDesc controlDesc{ pInfo->m_MaterialAnimations[type], 1 };
-                auto control = blender->CreateControl(controlDesc);
-
-                fnd::TexSrtDesc texAnimDesc{ pInfo->m_TextureAnimations[type], 1};
-                gocVisual->SetTexSrtAnimation(texAnimDesc);
+                auto pBlender = gocVisual->SetTexSrtBlender({ modelAnimCount });
+                for (size_t i = 0; i < modelAnimCount; i++)
+                    pBlender->CreateControl({ pInfo->m_TextureAnimations[type * 4 + i], 1 });
             }
 
             auto gocCollider = GetComponent<game::GOCCollider>();
@@ -97,13 +105,12 @@ namespace app
                 game::GOCCollider::Description description{ 1 };
                 gocCollider->Setup(description);
 
-                game::ColliCylinderShapeCInfo colliInfo;
+                game::ColliCylinderShapeCInfo colliInfo{};
                 colliInfo.m_Radius = 12.0f;
                 colliInfo.m_Height = 1.0f;
                 colliInfo.m_Unk2 |= 1;
 
-                Eigen::Quaternion<float> rotation(Eigen::AngleAxis<float>(MATHF_PI / 2, Eigen::Vector3f::UnitX()));
-                colliInfo.SetLocalRotation(rotation);
+                colliInfo.SetLocalRotation(Eigen::Quaternion<float>(Eigen::AngleAxis<float>(MATHF_PI / 2, Eigen::Vector3f::UnitX())));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 gocCollider->CreateShape(colliInfo);
@@ -128,12 +135,12 @@ namespace app
             }
         }
 
-        void Update(const fnd::SUpdateInfo& info) override
+        void Update(const fnd::SUpdateInfo& rInfo) override
         {
             if (!m_DoSquash)
                 return;
 
-            m_Time += info.deltaTime;
+            m_Time += rInfo.deltaTime;
             if (m_Time >= 0.7f)
             {
                 m_DoSquash = false;
@@ -141,11 +148,8 @@ namespace app
                 return;
             }
 
-            float scale = cos(m_Time * 1.4285715f * 3.1415927 * 2.0f);
-            csl::math::Vector3 scaleVector{ scale, scale, 1 };
-
-            auto gocVisual = GetComponent<fnd::GOCVisualModel>();
-            TestingGrounds::GOCVisualTransformed::SetLocalScale(gocVisual, &scaleVector);
+            float scale = cos(m_Time * 1.4285715f * 3.1415927f * 2.0f);
+            GetComponent<fnd::GOCVisualModel>()->SetLocalScale({ scale, scale, 1 });
         }
 
     private:
@@ -155,38 +159,22 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            SDashRingParam* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
+            auto gocSound = GetComponent<game::GOCSound>();
+            auto gocTransform = GetComponent<fnd::GOCTransform>();
+
+            auto pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
+            float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
+            char type = (char)pParam->m_Type;
 
             int deviceTag[3];
-            auto gocSound = GetComponent<game::GOCSound>();
-            if (gocSound)
-            {
-                if (pParam->m_Type == SDashRingParam::eType_Dash)
-                {
-                    TestingGrounds::GOCSound::Play(gocSound, deviceTag, "obj_dashring", 0);
-                }
-                else
-                {
-                    TestingGrounds::GOCSound::Play(gocSound, deviceTag, "obj_rainbowring", 0);
-                }
-            }
+            TestingGrounds::GOCSound::Play3D(gocSound, deviceTag, ms_SoundNames[type], 0);
 
-            float finalSpeed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
-
-            auto gocTransform = GetComponent<fnd::GOCTransform>();
-            auto position = gocTransform->GetLocalPosition();
-            auto rotation = gocTransform->GetLocalRotation();
-
-            csl::math::Vector3 forwardVector{ 0, 0, 1 };
-            csl::math::Vector3 direction{};
-            TestingGrounds::math::Vector3Rotate(&direction, &rotation, &forwardVector);
-            
-            csl::math::Vector3 destination{ direction.x() * pParam->m_FirstSpeed, direction.y() * pParam->m_FirstSpeed, direction.z() * pParam->m_FirstSpeed };
-            xgame::MsgSpringImpulse impulseMsg{ position, destination, pParam->m_OutOfControl, finalSpeed };
+            csl::math::Vector3 direction{ gocTransform->GetLocalRotation() * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed };
+            xgame::MsgSpringImpulse impulseMsg{ gocTransform->GetLocalPosition(), direction, pParam->m_OutOfControl, speed };
             impulseMsg.field_50.set(18);
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
+            
             m_DoSquash = true;
-
             return true;
         }
     };
