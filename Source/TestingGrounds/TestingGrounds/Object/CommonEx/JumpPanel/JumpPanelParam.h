@@ -19,7 +19,7 @@ namespace app
         EType m_Type{};
     };
 
-    static void paramMap_JumpPanel(app::SetEd::CResClass rClass)
+    static void paramMap_JumpPanel(SetEd::CResClass rClass)
     {
         TestingGrounds::AddParamFloat(rClass, "FirstSpeed", "", 0, 200.0f, 0.0f, 1000000.0f, 1.0f);
         TestingGrounds::AddParamFloat(rClass, "KeepVelocityDistance", "", 4, 0.25f, 0.0f, 10000.0f, 1.0f);

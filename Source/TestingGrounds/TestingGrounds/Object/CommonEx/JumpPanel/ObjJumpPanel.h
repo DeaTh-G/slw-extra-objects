@@ -7,6 +7,12 @@ namespace app
 {
     class ObjJumpPanel : public CSetObjectListener
     {
+    private:
+        inline static Vector3 ms_JumpPanelSize{ 14.6f, 0.85f, 19.6f };
+        inline static Vector3 ms_JumpPanelUSizes[] = { { 15.5f, 0.85f, 5.5f }, { 15.5f, 0.85f, 15.2f } };
+        inline static Vector3 ms_JumpPanelUPosition[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
+        inline static float ms_JumpPanelURotation[] = { -15.0f, -25.0f };
+
     public:
         ObjJumpPanel() {}
 
@@ -18,14 +24,13 @@ namespace app
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpPanelInfo>(document, "ObjJumpPanelInfo");
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
+            auto type = static_cast<char>(pParam->m_Type);
 
             fnd::GOComponent::BeginSetup(*this);
 
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
             if (pVisual)
             {
-                char type = (char)pParam->m_Type;
-
                 fnd::GOCVisualModel::Description description{};
                 description.m_Model = pInfo->m_Models[type];
 
@@ -37,21 +42,7 @@ namespace app
                     pBlender->CreateControl({ pInfo->m_TextureAnimations[i], 1 });
             }
 
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (pCollider)
-            {
-                game::GOCCollider::Description description{ 1 };
-                pCollider->Setup(description);
-
-                game::ColliBoxShapeCInfo colliInfo;
-                colliInfo.m_Size = csl::math::Vector3(14.6f, 0.85f, 19.6f);
-                colliInfo.m_Unk2 |= 1;
-
-                colliInfo.SetLocalPosition({ 0.0f, 0.0f, 19.0f });
-
-                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
-                pCollider->CreateShape(colliInfo);
-            }
+            SetupCollider(pParam->m_Type);
 
             game::GOCSound::SimpleSetup(this, 0, 0);
 
@@ -94,6 +85,46 @@ namespace app
             return true;
         }
 
+        void SetupCollider(SJumpPanelParam::EType type)
+        {
+            auto* pCollider = GetComponent<game::GOCCollider>();
+            if (!pCollider)
+                return;
+
+            if (type == SJumpPanelParam::eType_Normal)
+            {
+                game::GOCCollider::Description description{ 1 };
+                pCollider->Setup(description);
+
+                game::ColliBoxShapeCInfo colliInfo{};
+                colliInfo.m_Size = ms_JumpPanelSize;
+                colliInfo.m_Unk2 |= 1;
+
+                colliInfo.SetLocalPosition({ 0.0f, 0.0f, 19.0f });
+
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
+                pCollider->CreateShape(colliInfo);
+            }
+            else if (type == SJumpPanelParam::eType_Upwards)
+            {
+                game::GOCCollider::Description description{ 2 };
+                pCollider->Setup(description);
+
+                for (size_t i = 0; i < description.m_ShapeCount; i++)
+                {
+                    game::ColliBoxShapeCInfo colliInfo{};
+                    colliInfo.m_Size = ms_JumpPanelUSizes[i];
+                    colliInfo.m_Unk2 |= 1;
+
+                    colliInfo.SetLocalPosition(ms_JumpPanelUPosition[i]);
+                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotation[i] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
+
+                    ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
+                    pCollider->CreateShape(colliInfo);
+                }
+            }
+        }
+
         Vector3 GetDirectionVector()
         {
             auto* pTransform = GetComponent<fnd::GOCTransform>();
@@ -109,8 +140,11 @@ namespace app
                 Vector3 targetPosition{};
                 Quaternion targetRotation{};
                 TestingGrounds::ObjUtil::GetSetObjectTransform(m_pOwnerDocument, pParam->m_TargetID, &targetPosition, &targetRotation);
+                
+                Vector3 direction = static_cast<Vector3>(targetPosition - pTransform->GetLocalPosition());
+                direction.normalize();
 
-                return static_cast<Vector3>(targetPosition - pTransform->GetLocalPosition());
+                return static_cast<Vector3>(direction * pParam->m_FirstSpeed);
             }
         }
     };
