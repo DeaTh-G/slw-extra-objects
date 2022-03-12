@@ -163,9 +163,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ObjDashRing.h" />
+    <ClInclude Include="Object\CommonEx\DashRing\DashRingParam.h" />
+    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRing.h" />
+    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRingInfo.h" />
+    <ClInclude Include="Object\CommonEx\JumpPanel\JumpPanelParam.h" />
+    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanel.h" />
+    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanelInfo.h" />
     <ClInclude Include="ObjJumpBoard.h" />
-    <ClInclude Include="ObjJumpPanel.h" />
     <ClInclude Include="Patches.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ObjSuperRingSuper.h" />
