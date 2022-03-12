@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{eae0d5c1-44d7-4037-9600-6fc0fe3e8fbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\CommonEx">
+      <UniqueIdentifier>{b8d12612-84c3-4851-8564-b33bb793422f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\CommonEx\DashRing">
+      <UniqueIdentifier>{6067c154-c96d-40ea-ae8e-1778f7bdc53f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\CommonEx\JumpPanel">
+      <UniqueIdentifier>{25d60863-47ba-4839-8fef-d28c25b41f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\CommonEx\SuperRingSuper">
+      <UniqueIdentifier>{02febae8-6713-48c2-b739-58a73ff2efa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object\CommonEx\JumpBoardEx">
+      <UniqueIdentifier>{40fd3cfc-a0a1-4f46-86b4-6202fab84055}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Patches">
+      <UniqueIdentifier>{ac961f53-a58e-40a4-a640-08d9e5acf556}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches">
+      <UniqueIdentifier>{97159d42-e4a2-4397-adcb-219a7f1df976}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\DashRing\DashRingParam.h">
+      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRingInfo.h">
+      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRing.h">
+      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanelInfo.h">
+      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpPanel\JumpPanelParam.h">
+      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanel.h">
+      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuper.h">
+      <Filter>Header Files\Object\CommonEx\SuperRingSuper</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.h">
+      <Filter>Header Files\Object\CommonEx\SuperRingSuper</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardEx.h">
+      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpBoardEx\JumpBoardExParam.h">
+      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.h">
+      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Patches.h">
+      <Filter>Header Files\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Functions.h">
+      <Filter>Header Files\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="slw-extra-objects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\CSetObjectFactory.cpp">
+      <Filter>Header Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\CStateBase.cpp">
+      <Filter>Header Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\StageDataInitializer.cpp">
+      <Filter>Header Files\Patches</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
