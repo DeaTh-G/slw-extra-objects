@@ -9,6 +9,7 @@ namespace app
     {
     private:
         inline static Vector3 ms_JumpPanelSize{ 14.6f, 0.85f, 19.6f };
+        inline static Vector3 ms_JumpPanelPosition{ 0.0f, 0.0f, 19.0f };
         inline static Vector3 ms_JumpPanelUSizes[] = { { 15.5f, 0.85f, 5.5f }, { 15.5f, 0.85f, 15.2f } };
         inline static Vector3 ms_JumpPanelUPosition[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
         inline static float ms_JumpPanelURotation[] = { -15.0f, -25.0f };
@@ -100,7 +101,7 @@ namespace app
                 colliInfo.m_Size = ms_JumpPanelSize;
                 colliInfo.m_Unk2 |= 1;
 
-                colliInfo.SetLocalPosition({ 0.0f, 0.0f, 19.0f });
+                colliInfo.SetLocalPosition(ms_JumpPanelPosition);
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 pCollider->CreateShape(colliInfo);
