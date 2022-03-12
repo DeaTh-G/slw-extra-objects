@@ -20,7 +20,7 @@ namespace app
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
             if (pVisual)
             {
-                fnd::GOCVisualModel::Description description {};
+                fnd::GOCVisualModel::Description description{};
                 description.m_Model = pInfo->m_Model;
 
                 pVisual->Setup(description);

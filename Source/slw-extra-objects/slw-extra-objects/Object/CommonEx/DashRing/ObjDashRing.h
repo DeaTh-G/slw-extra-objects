@@ -34,19 +34,18 @@ namespace app
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
             if (pVisual)
             {
-                char type = (char)pParam->m_Type;
                 size_t modelAnimCount = ObjDashRingInfo::ms_AnimCount / ObjDashRingInfo::ms_ModelCount;
 
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[type];
+                description.m_Model = pInfo->m_Models[pParam->m_Type];
 
                 pVisual->Setup(description);
                 
-                pVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[type], 1 });
+                pVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[pParam->m_Type], 1 });
 
                 auto pBlender = pVisual->SetTexSrtBlender({ modelAnimCount });
                 for (size_t i = 0; i < modelAnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_TextureAnimations[type * 4 + i], 1 });
+                    pBlender->CreateControl({ pInfo->m_TextureAnimations[pParam->m_Type * 4 + i], 1 });
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
@@ -114,10 +113,9 @@ namespace app
 
             auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
             float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
-            char type = (char)pParam->m_Type;
 
             int deviceTag[3];
-            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, ms_SoundNames[type], 0);
+            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, ms_SoundNames[pParam->m_Type], 0);
 
             Vector3 direction{ pTransform->GetLocalRotation() * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed };
             xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), direction, pParam->m_OutOfControl, speed };

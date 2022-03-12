@@ -11,8 +11,9 @@ namespace app
         inline static Vector3 ms_JumpPanelSize{ 14.6f, 0.85f, 19.6f };
         inline static Vector3 ms_JumpPanelPosition{ 0.0f, 0.0f, 19.0f };
         inline static Vector3 ms_JumpPanelUSizes[] = { { 15.5f, 0.85f, 5.5f }, { 15.5f, 0.85f, 15.2f } };
-        inline static Vector3 ms_JumpPanelUPosition[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
-        inline static float ms_JumpPanelURotation[] = { -15.0f, -25.0f };
+        inline static Vector3 ms_JumpPanelUPositions[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
+        inline static float ms_JumpPanelURotations[] = { -15.0f, -25.0f };
+        inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
 
     public:
         ObjJumpPanel() {}
@@ -25,7 +26,6 @@ namespace app
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpPanelInfo>(document, "ObjJumpPanelInfo");
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
-            auto type = static_cast<char>(pParam->m_Type);
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -33,7 +33,7 @@ namespace app
             if (pVisual)
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[type];
+                description.m_Model = pInfo->m_Models[pParam->m_Type];
 
                 pVisual->Setup(description);
 
@@ -117,8 +117,8 @@ namespace app
                     colliInfo.m_Size = ms_JumpPanelUSizes[i];
                     colliInfo.m_Unk2 |= 1;
 
-                    colliInfo.SetLocalPosition(ms_JumpPanelUPosition[i]);
-                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotation[i] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
+                    colliInfo.SetLocalPosition(ms_JumpPanelUPositions[i]);
+                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotations[i] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
 
                     ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                     pCollider->CreateShape(colliInfo);
@@ -133,20 +133,29 @@ namespace app
 
             if (!pParam->m_TargetID)
             {
-                auto angle = pTransform->GetLocalRotation() * Eigen::Quaternionf(Eigen::AngleAxisf(pParam->m_Pitch * MATHF_PI / 180, Eigen::Vector3f::UnitY()));
+                auto angle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
                 return static_cast<Vector3>(angle * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed);
             }
             else
             {
                 Vector3 targetPosition{};
-                Quaternion targetRotation{};
-                ObjUtil::GetSetObjectTransform(*m_pOwnerDocument, pParam->m_TargetID, &targetPosition, &targetRotation);
+                ObjUtil::GetSetObjectTransform(*m_pOwnerDocument, pParam->m_TargetID, &targetPosition, nullptr);
                 
                 Vector3 direction = static_cast<Vector3>(targetPosition - pTransform->GetLocalPosition());
                 direction.normalize();
 
                 return static_cast<Vector3>(direction * pParam->m_FirstSpeed);
             }
+        }
+
+        Quaternion GetLaunchOffset(SJumpPanelParam::EType type)
+        {
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelLaunchOffsets[type] * MATHF_PI / 180, Eigen::Vector3f::UnitX()));
+        }
+
+        Quaternion GetPitchCorrection(float pitch)
+        {
+            return Eigen::Quaternionf(Eigen::AngleAxisf(pitch * MATHF_PI / 180, Eigen::Vector3f::UnitY()));
         }
     };
 }

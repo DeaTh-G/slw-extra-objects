@@ -19,10 +19,8 @@ namespace app
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
             if (pVisual)
             {
-                auto type = static_cast<char>(pParam->m_Type);
-
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[type];
+                description.m_Model = pInfo->m_Models[pParam->m_Type];
 
                 pVisual->Setup(description);
             }        
