@@ -2,11 +2,6 @@
 
 namespace SLW_EXTRA_OBJECTS
 {
-	namespace ObjUtil
-	{
-		inline static FUNCTION_PTR(void, __cdecl, GetSetObjectTransform, ASLR(0x0073E040), app::GameDocument* gameDocument, const app::CSetObjectID& objectID, csl::math::Vector3* position, csl::math::Quaternion* rotation);
-	}
-
 	class GOCSound
 	{
 	public:

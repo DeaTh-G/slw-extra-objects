@@ -140,7 +140,7 @@ namespace app
             {
                 Vector3 targetPosition{};
                 Quaternion targetRotation{};
-                SLW_EXTRA_OBJECTS::ObjUtil::GetSetObjectTransform(m_pOwnerDocument, pParam->m_TargetID, &targetPosition, &targetRotation);
+                ObjUtil::GetSetObjectTransform(*m_pOwnerDocument, pParam->m_TargetID, &targetPosition, &targetRotation);
                 
                 Vector3 direction = static_cast<Vector3>(targetPosition - pTransform->GetLocalPosition());
                 direction.normalize();
