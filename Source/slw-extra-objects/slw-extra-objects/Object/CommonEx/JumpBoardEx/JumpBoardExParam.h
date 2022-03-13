@@ -8,10 +8,10 @@ namespace app
     {
         enum EType
         {
-            eType_SmallSmall,
-            eType_LargeSmall,
-            eType_LargeMedium,
-            eType_LargeLarge
+            eType_15Small,
+            eType_30Small,
+            eType_30Medium,
+            eType_30Large
         };
 
         EType m_Type{};
