@@ -15,10 +15,7 @@ namespace app
         float m_DoSquash{};
 
     public:
-        ObjDashRing()
-        {
-            SetUpdateFlag(0, true);
-        }
+        ObjDashRing() {}
 
         void AddCallback(GameDocument& document) override
         {
@@ -93,11 +90,11 @@ namespace app
             if (m_Time >= 0.7f)
             {
                 m_DoSquash = false;
-                m_Time = 0;
+                m_Time = 0.0f;
                 return;
             }
 
-            float scale = cos(m_Time * 1.4285715f * 3.1415927f * 2.0f);
+            float scale = cos(m_Time * 1.4285715f * MATHF_PI * 2.0f);
             GetComponent<fnd::GOCVisualModel>()->SetLocalScale({ scale, scale, 1 });
         }
 

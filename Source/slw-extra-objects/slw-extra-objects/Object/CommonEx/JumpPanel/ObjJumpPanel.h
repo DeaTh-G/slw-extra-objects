@@ -15,6 +15,10 @@ namespace app
         inline static float ms_JumpPanelURotations[] = { -15.0f, -25.0f };
         inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
 
+    protected:
+        bool m_IsOn{ true };
+        float m_Time{};
+
     public:
         ObjJumpPanel() {}
 
@@ -64,9 +68,26 @@ namespace app
             }
         }
 
+        void Update(const fnd::SUpdateInfo& rInfo) override
+        {
+            if (m_IsOn)
+                return;
+
+            m_Time += rInfo.deltaTime;
+            if (m_Time >= 0.7f)
+            {
+                GetComponent<game::GOCCollider>()->SetEnable(true);
+                m_Time = 0.0f;
+                return;
+            }
+        }
+
     private:
         bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
         {
+            if (!m_IsOn)
+                return false;
+
             int playerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
             if (playerNo < 0)
                 return false;
@@ -75,13 +96,16 @@ namespace app
             auto* pTransform = GetComponent<fnd::GOCTransform>();
 
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
-            float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
+            float speedDropoffTime = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
 
             int deviceTag[3];
             SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
 
-            xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), GetDirectionVector(), pParam->m_OutOfControl, speed };
+            xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
+
+            GetComponent<game::GOCCollider>()->SetEnable(false);
+            m_IsOn = false;
 
             return true;
         }
@@ -131,10 +155,12 @@ namespace app
             auto* pTransform = GetComponent<fnd::GOCTransform>();
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
 
+            Vector3 direction{};
+
             if (!pParam->m_TargetID)
             {
-                auto angle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
-                return static_cast<Vector3>(angle * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed);
+                auto launchAngle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
+                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ());
             }
             else
             {
