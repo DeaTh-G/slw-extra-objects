@@ -98,14 +98,14 @@
     <ClCompile Include="Mod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Patches\CSetObjectFactory.cpp">
-      <Filter>Header Files\Patches</Filter>
-    </ClCompile>
     <ClCompile Include="Patches\CStateBase.cpp">
-      <Filter>Header Files\Patches</Filter>
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\CSetObjectFactory.cpp">
+      <Filter>Source Files\Patches</Filter>
     </ClCompile>
     <ClCompile Include="Patches\StageDataInitializer.cpp">
-      <Filter>Header Files\Patches</Filter>
+      <Filter>Source Files\Patches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
