@@ -5,7 +5,7 @@ namespace app
     class ObjJumpBoardEx : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpBoardSizes[] = { { 5.48f, 0.2f, 8.49f }, { 5.48f, 0.42f, 9.0f }, { 8.64f, 0.46f, 13.65f }, { 19.4f, 0.46f, 30.2f } };
+        inline static Vector3 ms_JumpBoardSizes[] = { { 2.48f, 0.2f, 3.0f }, { 2.48f, 0.42f, 3.5f }, { 5.64f, 0.46f, 13.65f }, { 15.4f, 0.46f, 30.2f } };
         inline static Vector3 ms_JumpBoardPositions[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
         inline static float ms_JumpBoardRotations[] = { -15, -30, -30, -30 };
 
@@ -53,7 +53,7 @@ namespace app
                 colliInfo.m_Unk2 |= 1;
 
                 colliInfo.SetLocalPosition(ms_JumpBoardPositions[pParam->m_Type]);
-                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[pParam->m_Type] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
+                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[pParam->m_Type] * MATHF_PI / 180, Vector3::UnitX())));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
 
@@ -66,8 +66,9 @@ namespace app
                 pPhysics->Setup({ 1 });
 
                 game::ColliMeshShapeCInfo colliInfo{};
-                colliInfo.m_Flags = 14;
+                colliInfo.m_Flags = 8;
                 colliInfo.m_Unk2 |= 0x100;
+                colliInfo.m_Unk3 = 3;
                 colliInfo.m_Mesh = pInfo->m_Colliders[pParam->m_Type];
 
                 pPhysics->CreateShape(colliInfo);
@@ -121,39 +122,51 @@ namespace app
             if (!playerInfo)
                 return false;
 
-            if ((*(Vector3*)(playerInfo + 12)).z() < 100.0f)
-                return false;
-            
             auto* pSound = GetComponent<game::GOCSound>();
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
 
+            if (pParam->m_IsStand)
+            {
+                auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, playerNo)));
+                float velocity = pPlayer->m_pPhysics->GetHorzVelocity().dot(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ());
+
+                if (velocity < 100.0f)
+                    return false;
+            }
+
             int deviceTag[3];
             SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
-
+            
             SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), false);
             m_IsOn = false;
+
+            xgame::MsgGetPosition playerPosMsg{};
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
             
-            xgame::MsgSpringImpulse impulseMsg{ *(Vector3*)(playerInfo + 4), GetDirectionVector(playerInfo), pParam->m_OutOfControl, 1 };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), pParam->m_OutOfControl, 1 };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
         }
 
-        Vector3 GetDirectionVector(int* playerInfo)
+        Vector3 GetDirectionVector(int playerNo)
         {
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            int* playerInfo = SLW_EXTRA_OBJECTS::ObjUtil::GetPlayerInformation(*m_pOwnerDocument, playerNo);
+            if (!playerInfo)
+                return {};
 
-            auto launchAngle = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset(pParam->m_Type);
+            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            auto direction = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * Vector3::UnitZ();
 
             if (*((bool*)playerInfo + 368))
-                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_ImpulseSpeedOnSpindash);
-            
-            return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_ImpulseSpeedOnNormal);
+                return static_cast<Vector3>(direction * pParam->m_ImpulseSpeedOnSpindash);
+
+            return static_cast<Vector3>(direction * pParam->m_ImpulseSpeedOnNormal);
         }
 
         Quaternion GetLaunchOffset(SJumpBoardExParam::EType type)
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[type] * MATHF_PI / 180, Eigen::Vector3f::UnitX()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[type] * MATHF_PI / 180, Vector3::UnitX()));
         }
     };
 }
