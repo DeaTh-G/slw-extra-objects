@@ -48,8 +48,7 @@ namespace app
             auto* pCollider = GetComponent<game::GOCCollider>();
             if (pCollider)
             {
-                game::GOCCollider::Description description{ 1 };
-                pCollider->Setup(description);
+                pCollider->Setup({ 1 });
 
                 game::ColliCylinderShapeCInfo colliInfo{};
                 colliInfo.m_Radius = 12.0f;

@@ -78,6 +78,7 @@ namespace app
             {
                 GetComponent<game::GOCCollider>()->SetEnable(true);
                 m_Time = 0.0f;
+                m_IsOn = true;
                 return;
             }
         }
@@ -118,8 +119,7 @@ namespace app
 
             if (type == SJumpPanelParam::eType_Normal)
             {
-                game::GOCCollider::Description description{ 1 };
-                pCollider->Setup(description);
+                pCollider->Setup({ 1 });
 
                 game::ColliBoxShapeCInfo colliInfo{};
                 colliInfo.m_Size = ms_JumpPanelSize;
@@ -160,7 +160,7 @@ namespace app
             if (!pParam->m_TargetID)
             {
                 auto launchAngle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
-                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ());
+                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed);
             }
             else
             {
