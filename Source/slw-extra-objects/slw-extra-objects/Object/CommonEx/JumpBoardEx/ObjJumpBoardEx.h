@@ -5,8 +5,13 @@ namespace app
     class ObjJumpBoardEx : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpBoardSizes[] = { { 6.0f, 3.0f, 7.5f }, { 6.0f, 3.0f, 1.0f } };
-        inline static Vector3 ms_JumpBoardPositions[] = { { 0.0f, -1.12f, 7.567f }, { 0.0f, 0.719f, 15.035f } };
+        inline static Vector3 ms_JumpBoardSizes[] = { { 5.48f, 0.2f, 8.49f }, { 5.48f, 0.42f, 9.0f }, { 8.64f, 0.46f, 13.65f }, { 19.4f, 0.46f, 30.2f } };
+        inline static Vector3 ms_JumpBoardPositions[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
+        inline static float ms_JumpBoardRotations[] = { -15, -30, -30, -30 };
+
+    protected:
+        bool m_IsOn{ true };
+        float m_Time{};
 
     public:
         ObjJumpBoardEx() {}
@@ -15,6 +20,8 @@ namespace app
         {
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
             fnd::GOComponent::Create<game::GOCCollider>(*this);
+            fnd::GOComponent::Create<game::GOCPhysics>(*this);
+            fnd::GOComponent::Create<game::GOCSound>(*this);
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpBoardExInfo>(document, "ObjJumpBoardExInfo");
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
@@ -36,7 +43,37 @@ namespace app
                 pBlender->CreateControl({ pInfo->m_ArrowAnimation, 1 });
             }
 
-            //SetupCollider(pParam->m_Type);
+            auto* pCollider = GetComponent<game::GOCCollider>();
+            if (pCollider)
+            {
+                pCollider->Setup({ 1 });
+
+                game::ColliBoxShapeCInfo colliInfo{};
+                colliInfo.m_Size = ms_JumpBoardSizes[pParam->m_Type];
+                colliInfo.m_Unk2 |= 1;
+
+                colliInfo.SetLocalPosition(ms_JumpBoardPositions[pParam->m_Type]);
+                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[pParam->m_Type] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
+
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
+
+                pCollider->CreateShape(colliInfo);
+            }
+
+            auto* pPhysics = GetComponent<game::GOCPhysics>();
+            if (pPhysics)
+            {
+                pPhysics->Setup({ 1 });
+
+                game::ColliMeshShapeCInfo colliInfo{};
+                colliInfo.m_Flags = 14;
+                colliInfo.m_Unk2 |= 0x100;
+                colliInfo.m_Mesh = pInfo->m_Colliders[pParam->m_Type];
+
+                pPhysics->CreateShape(colliInfo);
+            }
+
+            game::GOCSound::SimpleSetup(this, 0, 0);
 
             fnd::GOComponent::EndSetup(*this);
         }
@@ -48,20 +85,75 @@ namespace app
 
             switch (msg.GetType())
             {
+            case xgame::MsgHitEventCollision::MessageID:
+                return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
             default:
                 return CSetObjectListener::ProcessMessage(msg);
             }
         }
 
-    private:
-        void SetupCollider(SJumpBoardExParam::EType type)
+        void Update(const fnd::SUpdateInfo& rInfo) override
         {
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (!pCollider)
+            if (m_IsOn)
                 return;
 
-            game::GOCCollider::Description description{ 1 };
-            pCollider->Setup(description);
+            m_Time += rInfo.deltaTime;
+            if (m_Time >= 0.7f)
+            {
+                SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), true);
+                m_Time = 0.0f;
+                m_IsOn = true;
+                return;
+            }
+        }
+
+    private:
+        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
+        {
+            if (!m_IsOn)
+                return false;
+
+            int playerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
+            if (playerNo < 0)
+                return false;
+
+            xgame::MsgGetVelocity velMsg{};
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, velMsg);
+
+            if (velMsg.GetVelocity().z() < 100.0f)
+                return false;
+            
+            auto* pSound = GetComponent<game::GOCSound>();
+
+            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            float speedDropoffTime = 300.0f / 350.0f;
+
+            int deviceTag[3];
+            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
+
+            SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), false);
+            m_IsOn = false;
+
+            xgame::MsgGetPosition posMsg{};
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, posMsg);
+
+            xgame::MsgSpringImpulse impulseMsg{ posMsg.GetPosition(), GetDirectionVector(), 1, speedDropoffTime };
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
+
+            return true;
+        }
+
+        Vector3 GetDirectionVector()
+        {
+            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+
+            auto launchAngle = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset(pParam->m_Type);
+            return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * 350.0f);
+        }
+
+        Quaternion GetLaunchOffset(SJumpBoardExParam::EType type)
+        {
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[type] * MATHF_PI / 180, Eigen::Vector3f::UnitX()));
         }
     };
 }

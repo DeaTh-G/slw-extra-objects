@@ -13,6 +13,7 @@ namespace app
         inline static size_t ms_BeltAnimCount = ARRAYSIZE(ms_BeltAnimNames);
 
         hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
+        ResPhysicsMesh m_Colliders[ARRAYSIZE(ms_ModelNames)]{};
         hh::gfx::res::ResAnimTexSrt m_BeltAnimations[ARRAYSIZE(ms_BeltAnimNames)]{};
         hh::gfx::res::ResAnimTexSrt m_ArrowAnimation{};
 
@@ -21,7 +22,10 @@ namespace app
         {
             hh::ut::PackFile packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
             for (size_t i = 0; i < ms_ModelCount; i++)
+            {
                 m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
+                m_Colliders[i] = ObjUtil::GetPhysicsMeshResource(ms_ModelNames[i], packFile);
+            }
 
             for (size_t i = 0; i < ms_BeltAnimCount; i++)
                 m_BeltAnimations[i] = ObjUtil::GetTexSrtAnimationResource(ms_BeltAnimNames[i], packFile);
