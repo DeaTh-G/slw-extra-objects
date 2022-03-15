@@ -8,9 +8,9 @@ namespace app
     class ObjJumpPanel : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpPanelSize{ 14.6f, 0.85f, 19.6f };
+        inline static Vector3 ms_JumpPanelSize{ 8.6f, 0.85f, 19.6f };
         inline static Vector3 ms_JumpPanelPosition{ 0.0f, 0.0f, 19.0f };
-        inline static Vector3 ms_JumpPanelUSizes[] = { { 15.5f, 0.85f, 5.5f }, { 15.5f, 0.85f, 15.2f } };
+        inline static Vector3 ms_JumpPanelUSizes[] = { { 8.6f, 0.85f, 5.5f }, { 8.6f, 0.85f, 15.2f } };
         inline static Vector3 ms_JumpPanelUPositions[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
         inline static float ms_JumpPanelURotations[] = { -15.0f, -25.0f };
         inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
@@ -102,7 +102,10 @@ namespace app
             int deviceTag[3];
             SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
 
-            xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
+            xgame::MsgGetPosition playerPosMsg{};
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
+
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             GetComponent<game::GOCCollider>()->SetEnable(false);
@@ -142,7 +145,7 @@ namespace app
                     colliInfo.m_Unk2 |= 1;
 
                     colliInfo.SetLocalPosition(ms_JumpPanelUPositions[i]);
-                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotations[i] * MATHF_PI / 180, Eigen::Vector3f::UnitX())));
+                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotations[i] * MATHF_PI / 180, Vector3::UnitX())));
 
                     ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                     pCollider->CreateShape(colliInfo);
@@ -160,7 +163,7 @@ namespace app
             if (!pParam->m_TargetID)
             {
                 auto launchAngle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
-                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed);
+                return static_cast<Vector3>(launchAngle * Vector3::UnitZ() * pParam->m_FirstSpeed);
             }
             else
             {
@@ -176,12 +179,12 @@ namespace app
 
         Quaternion GetLaunchOffset(SJumpPanelParam::EType type)
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelLaunchOffsets[type] * MATHF_PI / 180, Eigen::Vector3f::UnitX()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelLaunchOffsets[type] * MATHF_PI / 180, Vector3::UnitX()));
         }
 
         Quaternion GetPitchCorrection(float pitch)
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(pitch * MATHF_PI / 180, Eigen::Vector3f::UnitY()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(pitch * MATHF_PI / 180, Vector3::UnitY()));
         }
     };
 }
