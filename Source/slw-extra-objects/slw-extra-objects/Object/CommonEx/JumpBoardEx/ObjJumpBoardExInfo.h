@@ -5,8 +5,8 @@ namespace app
     class ObjJumpBoardExInfo : public CObjInfo
     {
     private:
-        inline static const char* ms_ModelNames[] = { "cmn_obj_jumppanelM_15S", "cmn_obj_jumppanelM_30S", "cmn_obj_jumppanelM_30M", "cmn_obj_jumppanelM_30L" };
-        inline static const char* ms_BeltAnimNames[] = { "cmn_obj_jumppanelM_belt-0000", "cmn_obj_jumppanelM_belt-0001" };
+        inline static const char* ms_ModelNames[] = { "cmn_obj_jumpboard_15S", "cmn_obj_jumpboard_30S", "cmn_obj_jumpboard_30M", "cmn_obj_jumpboard_30L" };
+        inline static const char* ms_BeltAnimNames[] = { "cmn_obj_jumpboard_belt-0000", "cmn_obj_jumpboard_belt-0001" };
 
     public:
         inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
@@ -30,7 +30,7 @@ namespace app
             for (size_t i = 0; i < ms_BeltAnimCount; i++)
                 m_BeltAnimations[i] = ObjUtil::GetTexSrtAnimationResource(ms_BeltAnimNames[i], packFile);
 
-            m_ArrowAnimation = ObjUtil::GetTexSrtAnimationResource("cmn_obj_jumppanelM_arrow", packFile);
+            m_ArrowAnimation = ObjUtil::GetTexSrtAnimationResource("cmn_obj_jumpboard_arrow", packFile);
         }
 
         const char* GetInfoName() override

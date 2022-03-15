@@ -2,6 +2,11 @@
 
 namespace SLW_EXTRA_OBJECTS
 {
+	namespace ObjUtil
+	{
+		inline static FUNCTION_PTR(int*, __cdecl, GetPlayerInformation, ASLR(0x0073DE10), const app::GameDocument& rDocument, int playerNo);
+	}
+
 	class GOCSound
 	{
 	public:

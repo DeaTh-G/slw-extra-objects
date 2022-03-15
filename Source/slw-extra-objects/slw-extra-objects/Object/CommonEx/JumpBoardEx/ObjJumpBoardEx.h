@@ -117,38 +117,38 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            xgame::MsgGetVelocity velMsg{};
-            ObjUtil::SendMessageImmToPlayer(*this, playerNo, velMsg);
+            int* playerInfo = SLW_EXTRA_OBJECTS::ObjUtil::GetPlayerInformation(*m_pOwnerDocument, playerNo);
+            if (!playerInfo)
+                return false;
 
-            if (velMsg.GetVelocity().z() < 100.0f)
+            if ((*(Vector3*)(playerInfo + 12)).z() < 100.0f)
                 return false;
             
             auto* pSound = GetComponent<game::GOCSound>();
-
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
-            float speedDropoffTime = 300.0f / 350.0f;
 
             int deviceTag[3];
             SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
 
             SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), false);
             m_IsOn = false;
-
-            xgame::MsgGetPosition posMsg{};
-            ObjUtil::SendMessageImmToPlayer(*this, playerNo, posMsg);
-
-            xgame::MsgSpringImpulse impulseMsg{ posMsg.GetPosition(), GetDirectionVector(), 1, speedDropoffTime };
+            
+            xgame::MsgSpringImpulse impulseMsg{ *(Vector3*)(playerInfo + 4), GetDirectionVector(playerInfo), pParam->m_OutOfControl, 1 };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
         }
 
-        Vector3 GetDirectionVector()
+        Vector3 GetDirectionVector(int* playerInfo)
         {
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
 
             auto launchAngle = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset(pParam->m_Type);
-            return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * 350.0f);
+
+            if (*((bool*)playerInfo + 368))
+                return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_ImpulseSpeedOnSpindash);
+            
+            return static_cast<Vector3>(launchAngle * Eigen::Vector3f::UnitZ() * pParam->m_ImpulseSpeedOnNormal);
         }
 
         Quaternion GetLaunchOffset(SJumpBoardExParam::EType type)
