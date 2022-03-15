@@ -55,7 +55,7 @@ namespace app
                 colliInfo.m_Height = 1.0f;
                 colliInfo.m_Unk2 |= 1;
 
-                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(MATHF_PI / 2, Eigen::Vector3f::UnitX())));
+                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(MATHF_PI / 2, Vector3::UnitX())));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 pCollider->CreateShape(colliInfo);
@@ -113,7 +113,7 @@ namespace app
             int deviceTag[3];
             SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, ms_SoundNames[pParam->m_Type], 0);
 
-            Vector3 direction{ pTransform->GetLocalRotation() * Eigen::Vector3f::UnitZ() * pParam->m_FirstSpeed };
+            Vector3 direction{ pTransform->GetLocalRotation() * Vector3::UnitZ() * pParam->m_FirstSpeed };
             xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), direction, pParam->m_OutOfControl, speed };
             impulseMsg.field_50.set(18);
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
