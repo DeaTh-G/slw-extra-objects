@@ -67,8 +67,6 @@ namespace app
     private:
         bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
         {
-            auto* pSound = GetComponent<game::GOCSound>();
-
             xgame::MsgTakeObject takeMsg{ (xgame::MsgTakeObject::EType)19 };
             takeMsg.SetShapeUserID(msg.m_pOther->m_ID);
             SendMessageImm(msg.m_Sender, takeMsg);
@@ -76,9 +74,7 @@ namespace app
                 return false;
 
             GetComponent<game::GOCEffect>()->CreateEffect("ef_ob_com_yh1_ringget_ss");
-
-            int deviceTag[3];
-            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_superring", 0);
+            GetComponent<game::GOCSound>()->Play3D("obj_superring", {}, 0);
 
             SetStatusRetire();
             Kill();

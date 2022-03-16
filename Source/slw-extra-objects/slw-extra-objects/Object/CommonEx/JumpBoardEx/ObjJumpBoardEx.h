@@ -101,7 +101,7 @@ namespace app
             m_Time += rInfo.deltaTime;
             if (m_Time >= 0.7f)
             {
-                SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), true);
+                GetComponent<game::GOCPhysics>()->SetEnable(true);
                 m_Time = 0.0f;
                 m_IsOn = true;
                 return;
@@ -122,7 +122,6 @@ namespace app
             if (!playerInfo)
                 return false;
 
-            auto* pSound = GetComponent<game::GOCSound>();
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
 
             if (pParam->m_IsStand)
@@ -134,10 +133,9 @@ namespace app
                     return false;
             }
 
-            int deviceTag[3];
-            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
-            
-            SLW_EXTRA_OBJECTS::GOCPhysics::SetEnable(GetComponent<game::GOCPhysics>(), false);
+            GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
+            GetComponent<game::GOCPhysics>()->SetEnable(false);
+
             m_IsOn = false;
 
             xgame::MsgGetPosition playerPosMsg{};

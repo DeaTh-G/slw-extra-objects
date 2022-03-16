@@ -93,23 +93,19 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pSound = GetComponent<game::GOCSound>();
-            auto* pTransform = GetComponent<fnd::GOCTransform>();
-
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
             float speedDropoffTime = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
 
-            int deviceTag[3];
-            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, "obj_dashpanel", 0);
+            GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
+            GetComponent<game::GOCCollider>()->SetEnable(false);
+
+            m_IsOn = false;
 
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
 
             xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
-
-            GetComponent<game::GOCCollider>()->SetEnable(false);
-            m_IsOn = false;
 
             return true;
         }

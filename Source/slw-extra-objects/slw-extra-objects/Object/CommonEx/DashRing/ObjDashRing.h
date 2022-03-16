@@ -104,14 +104,12 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pSound = GetComponent<game::GOCSound>();
             auto* pTransform = GetComponent<fnd::GOCTransform>();
 
             auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
             float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
 
-            int deviceTag[3];
-            SLW_EXTRA_OBJECTS::GOCSound::Play3D(pSound, deviceTag, ms_SoundNames[pParam->m_Type], 0);
+            GetComponent<game::GOCSound>()->Play3D(ms_SoundNames[pParam->m_Type], {}, 0);
 
             Vector3 direction{ pTransform->GetLocalRotation() * Vector3::UnitZ() * pParam->m_FirstSpeed };
             xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), direction, pParam->m_OutOfControl, speed };
