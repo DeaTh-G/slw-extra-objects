@@ -118,20 +118,10 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            int* playerInfo = SLW_EXTRA_OBJECTS::ObjUtil::GetPlayerInformation(*m_pOwnerDocument, playerNo);
-            if (!playerInfo)
+            if (!CheckPlayerVelocity(playerNo))
                 return false;
 
             auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
-
-            if (pParam->m_IsStand)
-            {
-                auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, playerNo)));
-                float velocity = pPlayer->m_pPhysics->GetHorzVelocity().dot(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ());
-
-                if (velocity < 100.0f)
-                    return false;
-            }
 
             GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
             GetComponent<game::GOCPhysics>()->SetEnable(false);
@@ -143,6 +133,22 @@ namespace app
             
             xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), pParam->m_OutOfControl, 1 };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
+
+            return true;
+        }
+
+        bool CheckPlayerVelocity(int playerNo)
+        {
+            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+
+            if (!pParam->m_IsStand)
+                return true;
+
+            auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, playerNo)));
+            float velocity = pPlayer->m_pPhysics->GetHorzVelocity().dot(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ());
+
+            if (velocity < 100.0f)
+                return false;
 
             return true;
         }

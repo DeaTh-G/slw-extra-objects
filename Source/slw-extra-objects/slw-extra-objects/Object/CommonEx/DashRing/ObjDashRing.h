@@ -104,20 +104,24 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pTransform = GetComponent<fnd::GOCTransform>();
-
             auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
             float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
 
             GetComponent<game::GOCSound>()->Play3D(ms_SoundNames[pParam->m_Type], {}, 0);
 
-            Vector3 direction{ pTransform->GetLocalRotation() * Vector3::UnitZ() * pParam->m_FirstSpeed };
-            xgame::MsgSpringImpulse impulseMsg{ pTransform->GetLocalPosition(), direction, pParam->m_OutOfControl, speed };
+            xgame::MsgSpringImpulse impulseMsg{ GetComponent<fnd::GOCTransform>()->GetLocalPosition(), GetDirectionVector(), pParam->m_OutOfControl, speed };
             impulseMsg.field_50.set(18);
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
             
             m_DoSquash = true;
             return true;
+        }
+
+        Vector3 GetDirectionVector()
+        {
+            auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
+
+            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ() * pParam->m_FirstSpeed);
         }
     };
 }

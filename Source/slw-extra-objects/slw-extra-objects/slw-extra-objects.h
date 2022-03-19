@@ -20,3 +20,8 @@
 // Super Ring Super
 #include "Object/CommonEx/SuperRingSuper/ObjSuperRingSuperInfo.h"
 #include "Object/CommonEx/SuperRingSuper/ObjSuperRingSuper.h"
+
+// Wide Spring
+#include "Object/CommonEx/WideSpring/WideSpringParam.h"
+#include "Object/CommonEx/WideSpring/ObjWideSpringInfo.h"
+#include "Object/CommonEx/WideSpring/ObjWideSpring.h"

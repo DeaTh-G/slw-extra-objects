@@ -37,6 +37,9 @@
     <Filter Include="Source Files\Patches">
       <UniqueIdentifier>{97159d42-e4a2-4397-adcb-219a7f1df976}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Object\CommonEx\WideSpring">
+      <UniqueIdentifier>{38e200e2-2626-4451-80f5-e0fd1330d975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -89,6 +92,15 @@
     </ClInclude>
     <ClInclude Include="slw-extra-objects.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpring.h">
+      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpringInfo.h">
+      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\WideSpring\WideSpringParam.h">
+      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

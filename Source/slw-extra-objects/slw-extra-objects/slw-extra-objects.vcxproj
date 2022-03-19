@@ -108,6 +108,9 @@
     <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanelInfo.h" />
     <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuper.h" />
     <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.h" />
+    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpring.h" />
+    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpringInfo.h" />
+    <ClInclude Include="Object\CommonEx\WideSpring\WideSpringParam.h" />
     <ClInclude Include="Patches\Functions.h" />
     <ClInclude Include="Patches\Patches.h" />
     <ClInclude Include="pch.h" />
