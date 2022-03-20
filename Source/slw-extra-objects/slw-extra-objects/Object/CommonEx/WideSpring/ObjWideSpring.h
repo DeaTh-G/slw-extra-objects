@@ -106,8 +106,6 @@ namespace app
 
         Vector3 GetDirectionVector()
         {
-            auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
-            
             return static_cast<Vector3>(Vector3::UnitY() * m_FirstSpeed);
         }
     };
