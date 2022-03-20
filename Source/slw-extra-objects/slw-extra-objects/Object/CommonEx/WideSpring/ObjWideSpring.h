@@ -4,6 +4,11 @@ namespace app
 {
     class ObjWideSpring : public CSetObjectListener
     {
+    protected:
+        float m_FirstSpeed{};
+        float m_KeepVelocityDistance{};
+        float m_OutOfControl{};
+
     public:
         ObjWideSpring()
         {
@@ -17,6 +22,11 @@ namespace app
             fnd::GOComponent::Create<game::GOCSound>(*this);
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjWideSpringInfo>(document, "ObjWideSpringInfo");
+            auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
+
+            m_FirstSpeed = pParam->m_FirstSpeed;
+            m_KeepVelocityDistance = pParam->m_KeepVelocityDistance;
+            m_OutOfControl = pParam->m_OutOfControl;
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -75,15 +85,12 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
-            float speedDropoffTime = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
-
             GetComponent<game::GOCSound>()->Play3D("obj_spring", {}, 0);
 
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
 
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), m_OutOfControl, m_KeepVelocityDistance / m_FirstSpeed };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
@@ -101,7 +108,7 @@ namespace app
         {
             auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
             
-            return static_cast<Vector3>(Vector3::UnitY() * pParam->m_FirstSpeed);
+            return static_cast<Vector3>(Vector3::UnitY() * m_FirstSpeed);
         }
     };
 }

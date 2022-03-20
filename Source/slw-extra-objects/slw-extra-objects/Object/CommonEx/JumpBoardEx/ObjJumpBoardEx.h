@@ -10,6 +10,11 @@ namespace app
         inline static float ms_JumpBoardRotations[] = { -15, -30, -30, -30 };
 
     protected:
+        float m_ImpulseSpeedOnSpindash{};
+        float m_ImpulseSpeedOnNormal{};
+        float m_OutOfControl{};
+        bool m_IsStand{};
+        SJumpBoardExParam::EType m_Type{};
         bool m_IsOn{ true };
         float m_Time{};
 
@@ -24,7 +29,13 @@ namespace app
             fnd::GOComponent::Create<game::GOCSound>(*this);
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpBoardExInfo>(document, "ObjJumpBoardExInfo");
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            auto pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+
+            m_ImpulseSpeedOnSpindash = pParam->m_ImpulseSpeedOnSpindash;
+            m_ImpulseSpeedOnNormal = pParam->m_ImpulseSpeedOnNormal;
+            m_OutOfControl = pParam->m_OutOfControl;
+            m_IsStand = pParam->m_IsStand;
+            m_Type = pParam->m_Type;
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -32,7 +43,7 @@ namespace app
             if (pVisual)
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[pParam->m_Type];
+                description.m_Model = pInfo->m_Models[m_Type];
 
                 pVisual->Setup(description);
 
@@ -49,11 +60,11 @@ namespace app
                 pCollider->Setup({ 1 });
 
                 game::ColliBoxShapeCInfo colliInfo{};
-                colliInfo.m_Size = ms_JumpBoardSizes[pParam->m_Type];
+                colliInfo.m_Size = ms_JumpBoardSizes[m_Type];
                 colliInfo.m_Unk2 |= 1;
 
-                colliInfo.SetLocalPosition(ms_JumpBoardPositions[pParam->m_Type]);
-                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[pParam->m_Type] * MATHF_PI / 180, Vector3::UnitX())));
+                colliInfo.SetLocalPosition(ms_JumpBoardPositions[m_Type]);
+                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[m_Type] * MATHF_PI / 180, Vector3::UnitX())));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
 
@@ -69,7 +80,7 @@ namespace app
                 colliInfo.m_Flags = 8;
                 colliInfo.m_Unk2 |= 0x100;
                 colliInfo.m_Unk3 = 3;
-                colliInfo.m_Mesh = pInfo->m_Colliders[pParam->m_Type];
+                colliInfo.m_Mesh = pInfo->m_Colliders[m_Type];
 
                 pPhysics->CreateShape(colliInfo);
             }
@@ -121,8 +132,6 @@ namespace app
             if (!CheckPlayerVelocity(playerNo))
                 return false;
 
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
-
             GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
             GetComponent<game::GOCPhysics>()->SetEnable(false);
 
@@ -131,7 +140,7 @@ namespace app
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
             
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), pParam->m_OutOfControl, 0 };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), m_OutOfControl, 0 };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
@@ -139,9 +148,7 @@ namespace app
 
         bool CheckPlayerVelocity(int playerNo)
         {
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
-
-            if (!pParam->m_IsStand)
+            if (!m_IsStand)
                 return true;
 
             auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, playerNo)));
@@ -159,18 +166,17 @@ namespace app
             if (!playerInfo)
                 return {};
 
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
-            auto direction = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * Vector3::UnitZ();
+            auto direction = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset() * Vector3::UnitZ();
 
             if (*((bool*)playerInfo + 368))
-                return static_cast<Vector3>(direction * pParam->m_ImpulseSpeedOnSpindash);
+                return static_cast<Vector3>(direction * m_ImpulseSpeedOnSpindash);
 
-            return static_cast<Vector3>(direction * pParam->m_ImpulseSpeedOnNormal);
+            return static_cast<Vector3>(direction * m_ImpulseSpeedOnNormal);
         }
 
-        Quaternion GetLaunchOffset(SJumpBoardExParam::EType type)
+        Quaternion GetLaunchOffset()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[type] * MATHF_PI / 180, Vector3::UnitX()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[m_Type] * MATHF_PI / 180, Vector3::UnitX()));
         }
     };
 }

@@ -11,6 +11,10 @@ namespace app
         inline static const char* ms_SoundNames[] = { "obj_dashring", "obj_rainbowring" };
 
     protected:
+        float m_FirstSpeed{};
+        float m_OutOfControl{};
+        float m_KeepVelocityDistance{};
+        SDashRingParam::EType m_Type{};
         float m_Time{};
         float m_DoSquash{};
 
@@ -26,6 +30,11 @@ namespace app
             auto* pInfo = ObjUtil::GetObjectInfo<ObjDashRingInfo>(document, "ObjDashRingInfo");
             auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
 
+            m_FirstSpeed = pParam->m_FirstSpeed;
+            m_OutOfControl = pParam->m_OutOfControl;
+            m_KeepVelocityDistance = pParam->m_KeepVelocityDistance;
+            m_Type = pParam->m_Type;
+
             fnd::GOComponent::BeginSetup(*this);
 
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
@@ -34,15 +43,15 @@ namespace app
                 size_t modelAnimCount = ObjDashRingInfo::ms_AnimCount / ObjDashRingInfo::ms_ModelCount;
 
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[pParam->m_Type];
+                description.m_Model = pInfo->m_Models[m_Type];
 
                 pVisual->Setup(description);
                 
-                pVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[pParam->m_Type], 1 });
+                pVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[m_Type], 1 });
 
                 auto pBlender = pVisual->SetTexSrtBlender({ modelAnimCount });
                 for (size_t i = 0; i < modelAnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_TextureAnimations[pParam->m_Type * 4 + i], 1 });
+                    pBlender->CreateControl({ pInfo->m_TextureAnimations[m_Type * 4 + i], 1 });
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
@@ -104,24 +113,20 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
-            float speed = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
+            GetComponent<game::GOCSound>()->Play3D(ms_SoundNames[m_Type], {}, 0);
+            
+            m_DoSquash = true;
 
-            GetComponent<game::GOCSound>()->Play3D(ms_SoundNames[pParam->m_Type], {}, 0);
-
-            xgame::MsgSpringImpulse impulseMsg{ GetComponent<fnd::GOCTransform>()->GetLocalPosition(), GetDirectionVector(), pParam->m_OutOfControl, speed };
+            xgame::MsgSpringImpulse impulseMsg{ GetComponent<fnd::GOCTransform>()->GetLocalPosition(), GetDirectionVector(), m_OutOfControl, m_KeepVelocityDistance / m_FirstSpeed };
             impulseMsg.field_50.set(18);
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
             
-            m_DoSquash = true;
             return true;
         }
 
         Vector3 GetDirectionVector()
         {
-            auto* pParam = reinterpret_cast<SDashRingParam*>(m_pAdapter->GetData());
-
-            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ() * pParam->m_FirstSpeed);
+            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ() * m_FirstSpeed);
         }
     };
 }

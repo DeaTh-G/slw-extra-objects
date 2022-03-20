@@ -16,6 +16,12 @@ namespace app
         inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
 
     protected:
+        float m_FirstSpeed{};
+        float m_KeepVelocityDistance{};
+        float m_OutOfControl{};
+        float m_Pitch{};
+        CSetObjectID m_TargetID{};
+        SJumpPanelParam::EType m_Type{};
         bool m_IsOn{ true };
         float m_Time{};
 
@@ -31,13 +37,20 @@ namespace app
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpPanelInfo>(document, "ObjJumpPanelInfo");
             auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
 
+            m_FirstSpeed = pParam->m_FirstSpeed;
+            m_KeepVelocityDistance = pParam->m_KeepVelocityDistance;
+            m_OutOfControl = pParam->m_OutOfControl;
+            m_Pitch = pParam->m_Pitch;
+            m_TargetID = pParam->m_TargetID;
+            m_Type = pParam->m_Type;
+
             fnd::GOComponent::BeginSetup(*this);
 
             auto* pVisual = GetComponent<fnd::GOCVisualModel>();
             if (pVisual)
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[pParam->m_Type];
+                description.m_Model = pInfo->m_Models[m_Type];
 
                 pVisual->Setup(description);
 
@@ -47,7 +60,7 @@ namespace app
                     pBlender->CreateControl({ pInfo->m_TextureAnimations[i], 1 });
             }
 
-            SetupCollider(pParam->m_Type);
+            SetupCollider();
 
             game::GOCSound::SimpleSetup(this, 0, 0);
 
@@ -93,9 +106,6 @@ namespace app
             if (playerNo < 0)
                 return false;
 
-            auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
-            float speedDropoffTime = pParam->m_KeepVelocityDistance / pParam->m_FirstSpeed;
-
             GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
             GetComponent<game::GOCCollider>()->SetEnable(false);
 
@@ -104,19 +114,19 @@ namespace app
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
 
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), pParam->m_OutOfControl, speedDropoffTime };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), m_OutOfControl, m_KeepVelocityDistance / m_FirstSpeed };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
         }
 
-        void SetupCollider(SJumpPanelParam::EType type)
+        void SetupCollider()
         {
             auto* pCollider = GetComponent<game::GOCCollider>();
             if (!pCollider)
                 return;
 
-            if (type == SJumpPanelParam::eType_Normal)
+            if (m_Type == SJumpPanelParam::eType_Normal)
             {
                 pCollider->Setup({ 1 });
 
@@ -129,7 +139,7 @@ namespace app
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                 pCollider->CreateShape(colliInfo);
             }
-            else if (type == SJumpPanelParam::eType_Upwards)
+            else if (m_Type == SJumpPanelParam::eType_Upwards)
             {
                 game::GOCCollider::Description description{ 2 };
                 pCollider->Setup(description);
@@ -152,35 +162,33 @@ namespace app
         Vector3 GetDirectionVector()
         {
             auto* pTransform = GetComponent<fnd::GOCTransform>();
-            auto* pParam = reinterpret_cast<SJumpPanelParam*>(m_pAdapter->GetData());
-
             Vector3 direction{};
 
-            if (!pParam->m_TargetID)
+            if (!m_TargetID)
             {
-                auto launchAngle = pTransform->GetLocalRotation() * GetLaunchOffset(pParam->m_Type) * GetPitchCorrection(pParam->m_Pitch);
-                return static_cast<Vector3>(launchAngle * Vector3::UnitZ() * pParam->m_FirstSpeed);
+                auto launchAngle = pTransform->GetLocalRotation() * GetLaunchOffset() * GetPitchCorrection();
+                return static_cast<Vector3>(launchAngle * Vector3::UnitZ() * m_FirstSpeed);
             }
             else
             {
                 Vector3 targetPosition{};
-                ObjUtil::GetSetObjectTransform(*m_pOwnerDocument, pParam->m_TargetID, &targetPosition, nullptr);
+                ObjUtil::GetSetObjectTransform(*m_pOwnerDocument, m_TargetID, &targetPosition, nullptr);
                 
                 Vector3 direction = static_cast<Vector3>(targetPosition - pTransform->GetLocalPosition());
                 direction.normalize();
 
-                return static_cast<Vector3>(direction * pParam->m_FirstSpeed);
+                return static_cast<Vector3>(direction * m_FirstSpeed);
             }
         }
 
-        Quaternion GetLaunchOffset(SJumpPanelParam::EType type)
+        Quaternion GetLaunchOffset()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelLaunchOffsets[type] * MATHF_PI / 180, Vector3::UnitX()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelLaunchOffsets[m_Type] * MATHF_PI / 180, Vector3::UnitX()));
         }
 
-        Quaternion GetPitchCorrection(float pitch)
+        Quaternion GetPitchCorrection()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(pitch * MATHF_PI / 180, Vector3::UnitY()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(m_Pitch * MATHF_PI / 180, Vector3::UnitY()));
         }
     };
 }
