@@ -131,7 +131,7 @@ namespace app
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
             
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), pParam->m_OutOfControl, 1 };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), pParam->m_OutOfControl, 0 };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
