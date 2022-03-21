@@ -57,6 +57,12 @@ namespace app
                 pCollider->CreateShape(colliInfo);
             }
 
+            if (pParam->m_IsEventOn)
+            {
+                pVisual->SetVisibility(false);
+                pCollider->SetEnable(false);
+            }
+
             game::GOCSound::SimpleSetup(this, 0, 0);
 
             fnd::GOComponent::EndSetup(*this);
@@ -73,6 +79,8 @@ namespace app
                 return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
             case xgame::MsgPLGetHomingTargetInfo::MessageID:
                 return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
+            case xgame::MsgNotifyObjectEvent::MessageID:
+                return ProcMsgNotifyObjectEvent(reinterpret_cast<xgame::MsgNotifyObjectEvent&>(msg));
             default:
                 return CSetObjectListener::ProcessMessage(msg);
             }
@@ -100,6 +108,17 @@ namespace app
         {
             auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Eigen::Vector4f(0, 3.5f, 0, 1);
             msg.m_CursorPosition = Vector3(cursorPos.x(), cursorPos.y(), cursorPos.z());
+
+            return true;
+        }
+
+        bool ProcMsgNotifyObjectEvent(xgame::MsgNotifyObjectEvent& msg)
+        {
+            if (!msg.GetEventType())
+                return false;
+
+            GetComponent<fnd::GOCVisualModel>()->SetVisibility(true);
+            GetComponent<game::GOCCollider>()->SetEnable(true);
 
             return true;
         }
