@@ -2,6 +2,9 @@
 
 #include "include/detours.h"
 
+#define TO_RAD(degree) \
+    (degree * MATHF_PI / 180.0f)
+
 #define HOOK(returnType, callingConvention, functionName, location, ...) \
     typedef returnType callingConvention functionName(__VA_ARGS__); \
     functionName* original##functionName = (functionName*)(location); \

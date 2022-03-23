@@ -64,7 +64,7 @@ namespace app
                 colliInfo.m_Unk2 |= 1;
 
                 colliInfo.SetLocalPosition(ms_JumpBoardPositions[m_Type]);
-                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[m_Type] * MATHF_PI / 180, Vector3::UnitX())));
+                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(ms_JumpBoardRotations[m_Type]), Vector3::UnitX())));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
 
@@ -176,7 +176,7 @@ namespace app
 
         Quaternion GetLaunchOffset()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpBoardRotations[m_Type] * MATHF_PI / 180, Vector3::UnitX()));
+            return Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(ms_JumpBoardRotations[m_Type]), Vector3::UnitX()));
         }
     };
 }
