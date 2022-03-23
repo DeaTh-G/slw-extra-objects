@@ -20,6 +20,7 @@ namespace app
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
             fnd::GOComponent::Create<game::GOCCollider>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
+            fnd::GOComponent::Create<game::GOCAnimationSimple>(*this);
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjWideSpringInfo>(document, "ObjWideSpringInfo");
             auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
@@ -35,8 +36,17 @@ namespace app
             {
                 fnd::GOCVisualModel::Description description{};
                 description.m_Model = pInfo->m_Model;
+                description.m_Skeleton = pInfo->m_Skeleton;
 
                 pVisual->Setup(description);
+
+                auto* pAnimation = GetComponent<game::GOCAnimationSimple>();
+                if (pAnimation)
+                {
+                    pAnimation->Setup({ 1 });
+                    pAnimation->Add("HIT", pInfo->m_Animation, game::PlayPolicy::Once);
+                    pVisual->AttachAnimation(pAnimation);
+                }
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
@@ -94,6 +104,7 @@ namespace app
                 return false;
 
             GetComponent<game::GOCSound>()->Play3D("obj_spring", {}, 0);
+            GetComponent<game::GOCAnimationSimple>()->SetAnimation("HIT");
 
             xgame::MsgGetPosition playerPosMsg{};
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
