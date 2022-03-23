@@ -67,7 +67,7 @@ namespace app
                 pCollider->CreateShape(colliInfo);
             }
 
-            if (pParam->m_IsEventOn)
+            if (pParam->m_IsEventOn && !GetExtUserData(eExtUserDataType_High))
             {
                 pVisual->SetVisibility(false);
                 pCollider->SetEnable(false);
@@ -130,6 +130,8 @@ namespace app
 
             GetComponent<fnd::GOCVisualModel>()->SetVisibility(true);
             GetComponent<game::GOCCollider>()->SetEnable(true);
+
+            SetExtUserData(eExtUserDataType_High, 1);
 
             return true;
         }
