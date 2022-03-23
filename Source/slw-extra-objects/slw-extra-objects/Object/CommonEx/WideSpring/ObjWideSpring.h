@@ -61,7 +61,7 @@ namespace app
                 colliInfo.m_Unk3 = 0x20000;
 
                 colliInfo.SetLocalPosition({ 0.0f, 3.5f, 0.0f });
-                colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(90.0f), Vector3::UnitZ())));
+                colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(90.0f), Vector3::UnitZ()));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, colliInfo);
                 pCollider->CreateShape(colliInfo);

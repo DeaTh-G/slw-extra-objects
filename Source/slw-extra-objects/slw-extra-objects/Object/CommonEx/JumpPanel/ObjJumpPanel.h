@@ -71,7 +71,7 @@ namespace app
                     colliInfo.SetLocalPosition(ms_JumpPanelPositions[m_Type + i]);
 
                     if (m_Type == SJumpPanelParam::eType_Upwards)
-                        colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(ms_JumpPanelURotations[i]), Vector3::UnitX())));
+                        colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_JumpPanelURotations[i]), Vector3::UnitX()));
 
                     ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                     pCollider->CreateShape(colliInfo);
@@ -160,12 +160,12 @@ namespace app
 
         Quaternion GetLaunchOffset()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(ms_JumpPanelLaunchOffsets[m_Type]), Vector3::UnitX()));
+            return Eigen::AngleAxisf(TO_RAD(ms_JumpPanelLaunchOffsets[m_Type]), Vector3::UnitX());
         }
 
         Quaternion GetPitchCorrection()
         {
-            return Eigen::Quaternionf(Eigen::AngleAxisf(TO_RAD(m_Pitch), Vector3::UnitY()));
+            return Eigen::AngleAxisf(TO_RAD(m_Pitch), Vector3::UnitY());
         }
     };
 }
