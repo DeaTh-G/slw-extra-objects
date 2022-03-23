@@ -8,10 +8,8 @@ namespace app
     class ObjJumpPanel : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpPanelSize{ 8.6f, 0.85f, 19.6f };
-        inline static Vector3 ms_JumpPanelPosition{ 0.0f, 0.0f, 19.0f };
-        inline static Vector3 ms_JumpPanelUSizes[] = { { 8.6f, 0.85f, 5.5f }, { 8.6f, 0.85f, 15.2f } };
-        inline static Vector3 ms_JumpPanelUPositions[] = { { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
+        inline static Vector3 ms_JumpPanelSizes[] = { { 8.6f, 0.85f, 19.6f }, { 8.6f, 0.85f, 5.5f }, { 8.6f, 0.85f, 15.2f } };
+        inline static Vector3 ms_JumpPanelPositions[] = { { 0.0f, 0.0f, 19.0f }, { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
         inline static float ms_JumpPanelURotations[] = { -15.0f, -25.0f };
         inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
 
@@ -60,7 +58,25 @@ namespace app
                     pBlender->CreateControl({ pInfo->m_TextureAnimations[i], 1 });
             }
 
-            SetupCollider();
+            auto* pCollider = GetComponent<game::GOCCollider>();
+            if (pCollider)
+            {
+                pCollider->Setup({ m_Type + 1 });
+                for (size_t i = 0; i < pCollider->m_Shapes.capacity(); i++)
+                {
+                    game::ColliBoxShapeCInfo colliInfo{};
+                    colliInfo.m_Size = ms_JumpPanelSizes[m_Type + i];
+                    colliInfo.m_Unk2 |= 1;
+
+                    colliInfo.SetLocalPosition(ms_JumpPanelPositions[m_Type + i]);
+
+                    if (m_Type == SJumpPanelParam::eType_Upwards)
+                        colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotations[i] * MATHF_PI / 180, Vector3::UnitX())));
+
+                    ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
+                    pCollider->CreateShape(colliInfo);
+                }
+            }
 
             game::GOCSound::SimpleSetup(this, 0, 0);
 
@@ -118,45 +134,6 @@ namespace app
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
-        }
-
-        void SetupCollider()
-        {
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (!pCollider)
-                return;
-
-            if (m_Type == SJumpPanelParam::eType_Normal)
-            {
-                pCollider->Setup({ 1 });
-
-                game::ColliBoxShapeCInfo colliInfo{};
-                colliInfo.m_Size = ms_JumpPanelSize;
-                colliInfo.m_Unk2 |= 1;
-
-                colliInfo.SetLocalPosition(ms_JumpPanelPosition);
-
-                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
-                pCollider->CreateShape(colliInfo);
-            }
-            else if (m_Type == SJumpPanelParam::eType_Upwards)
-            {
-                game::GOCCollider::Description description{ 2 };
-                pCollider->Setup(description);
-
-                for (size_t i = 0; i < description.m_ShapeCount; i++)
-                {
-                    game::ColliBoxShapeCInfo colliInfo{};
-                    colliInfo.m_Size = ms_JumpPanelUSizes[i];
-                    colliInfo.m_Unk2 |= 1;
-
-                    colliInfo.SetLocalPosition(ms_JumpPanelUPositions[i]);
-                    colliInfo.SetLocalRotation(Eigen::Quaternionf(Eigen::AngleAxisf(ms_JumpPanelURotations[i] * MATHF_PI / 180, Vector3::UnitX())));
-
-                    ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
-                    pCollider->CreateShape(colliInfo);
-                }
-            }
         }
 
         Vector3 GetDirectionVector()

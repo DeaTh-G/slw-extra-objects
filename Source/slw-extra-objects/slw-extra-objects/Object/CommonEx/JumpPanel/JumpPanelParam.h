@@ -5,7 +5,7 @@ namespace app
 {
     struct SJumpPanelParam
     {
-        enum EType
+        enum EType : size_t
         {
             eType_Normal,
             eType_Upwards
