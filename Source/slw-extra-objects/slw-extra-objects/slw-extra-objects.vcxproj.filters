@@ -40,6 +40,9 @@
     <Filter Include="Header Files\Object\CommonEx\WideSpring">
       <UniqueIdentifier>{38e200e2-2626-4451-80f5-e0fd1330d975}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Object\CommonEx\UpReel">
+      <UniqueIdentifier>{dfd46ed4-2967-44b7-8637-3d7af7ada4a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -101,6 +104,15 @@
     </ClInclude>
     <ClInclude Include="Object\CommonEx\WideSpring\WideSpringParam.h">
       <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReel.h">
+      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReelInfo.h">
+      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\CommonEx\UpReel\UpReelParam.h">
+      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

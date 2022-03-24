@@ -25,3 +25,8 @@
 #include "Object/CommonEx/WideSpring/WideSpringParam.h"
 #include "Object/CommonEx/WideSpring/ObjWideSpringInfo.h"
 #include "Object/CommonEx/WideSpring/ObjWideSpring.h"
+
+// Wide Spring
+#include "Object/CommonEx/UpReel/UpReelParam.h"
+#include "Object/CommonEx/UpReel/ObjUpReelInfo.h"
+#include "Object/CommonEx/UpReel/ObjUpReel.h"

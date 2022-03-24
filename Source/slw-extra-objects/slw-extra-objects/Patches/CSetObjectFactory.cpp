@@ -6,6 +6,7 @@ static app::CSetObjClass DASH_RING_CLASS{ app::CSetObjClass::Create<app::ObjDash
 static app::CSetObjClass JUMP_PANEL_CLASS{ app::CSetObjClass::Create<app::ObjJumpPanel, app::ObjJumpPanelInfo>("JumpPanel", "OBJECT", "Gimmick", app::paramMap_JumpPanel) };
 static app::CSetObjClass JUMP_BOARD_EX_CLASS{ app::CSetObjClass::Create<app::ObjJumpBoardEx, app::ObjJumpBoardExInfo>("JumpBoardEx", "OBJECT", "Gimmick", app::paramMap_JumpBoardEx) };
 static app::CSetObjClass WIDE_SPRING_CLASS{ app::CSetObjClass::Create<app::ObjWideSpring, app::ObjWideSpringInfo>("WideSpring", "OBJECT", "Gimmick", app::paramMap_WideSpring) };
+static app::CSetObjClass UP_REEL_CLASS{ app::CSetObjClass::Create<app::ObjUpReel, app::ObjUpReelInfo>("UpReel", "OBJECT", "Gimmick") };
 
 HOOK(app::CSetObjectFactory*, __fastcall, h_CSetObjectFactoryCtor, ASLR(0x008443D0), app::CSetObjectFactory* This, void* edx)
 {
@@ -17,6 +18,7 @@ HOOK(app::CSetObjectFactory*, __fastcall, h_CSetObjectFactoryCtor, ASLR(0x008443
 	This->RegisterClass(&JUMP_PANEL_CLASS);
 	This->RegisterClass(&JUMP_BOARD_EX_CLASS);
 	This->RegisterClass(&WIDE_SPRING_CLASS);
+	This->RegisterClass(&UP_REEL_CLASS);
 	This->EndRegistration();
 
 	return This;
