@@ -44,7 +44,6 @@ namespace app
                 }
                 
                 SetWireLength();
-
                 SetHandleDistance();
             }
 
@@ -95,8 +94,8 @@ namespace app
 
         bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
         {
-            auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Eigen::Vector4f(0, -m_Length - 4.0f, 0, 1);
-            msg.m_CursorPosition = Vector3(cursorPos.x(), cursorPos.y(), cursorPos.z());
+            auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Vector4(0, -m_Length - 4.0f, 0, 1);
+            msg.m_CursorPosition = static_cast<Vector3>(cursorPos);
 
             return true;
         }
@@ -112,6 +111,7 @@ namespace app
             pWireModel->GetNodeTransform(2, "Cos_top", &transform);
             transform.m_Position.y() += -m_Length + 4.0f;
             pWireModel->SetNodeTransform(2, "Cos_top", transform);
+            
             pWireModel->m_Impl.m_pModelNode->m_Bounds.m_Max.y() += -m_Length + 4.0f;
         }
 
