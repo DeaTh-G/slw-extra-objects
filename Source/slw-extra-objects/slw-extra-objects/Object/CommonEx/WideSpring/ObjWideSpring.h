@@ -118,7 +118,7 @@ namespace app
         bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
         {
             auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Vector4(0, 3.5f, 0, 1);
-            msg.m_CursorPosition = static_cast<Vector3>(cursorPos);
+            msg.m_CursorPosition = Vector3(cursorPos.x(), cursorPos.y(), cursorPos.z());
 
             return true;
         }

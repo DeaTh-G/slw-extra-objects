@@ -40,6 +40,9 @@ namespace app
 
                     pVisual->Setup(description);
 
+                    /*if (i == 1)
+                        pVisual->SetLocalScale({ 0.9f, 0.9f, 0.9f });*/
+
                     pVisualContainer->Add(pVisual);
                 }
                 
@@ -77,17 +80,39 @@ namespace app
                 return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
             case xgame::MsgPLGetHomingTargetInfo::MessageID:
                 return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
+            case xgame::MsgGetExternalMovePosition::MessageID:
+                return ProcMsgGetExternalMovePosition(reinterpret_cast<xgame::MsgGetExternalMovePosition&>(msg));
             default:
                 return CSetObjectListener::ProcessMessage(msg);
             }
         }
 
     private:
+        bool ProcMsgGetExternalMovePosition(xgame::MsgGetExternalMovePosition& message)
+        {
+            auto* pHandleModel = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1]);
+            if (!pHandleModel)
+                return false;
+
+            *message.m_pTransform = pHandleModel->m_Impl.m_Transform;
+            Quaternion rotation(pHandleModel->m_Impl.m_Transform);
+            rotation = rotation * Eigen::AngleAxisf(TO_RAD(180), Vector3::UnitY());
+            
+            for (size_t i = 0; i < 3; i++)
+                message.m_pTransform->SetColumn(i, static_cast<Vector3>(rotation.toRotationMatrix().row(i)));
+
+            message.m_pTransform->GetTransVector().y() += -10.5f;
+        }
+
         bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
         {
             int playerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
             if (playerNo < 0)
                 return false;
+
+            xgame::MsgCatchPlayer catchMessage{};
+            catchMessage.m_Unk3 = 13;
+            ObjUtil::SendMessageImmToPlayer(*this, playerNo, catchMessage);
 
             return true;
         }
@@ -95,7 +120,7 @@ namespace app
         bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
         {
             auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Vector4(0, -m_Length - 4.0f, 0, 1);
-            msg.m_CursorPosition = static_cast<Vector3>(cursorPos);
+            msg.m_CursorPosition = Vector3(cursorPos.x(), cursorPos.y(), cursorPos.z());
 
             return true;
         }
