@@ -6,10 +6,12 @@ namespace app
     {
     protected:
         float m_Length{};
-        float m_Time{};
-        float m_WaitTime{};
-        bool m_Move{};
+        float m_ImpulseVelocity{};
+        float m_OutOfControl{};
+        float m_UpSpeedMax{};
+        bool m_IsOneTimeUp{};
         int m_PlayerNo{};
+        bool m_IsPlayerMoving{};
 
     public:
         ObjUpReel() {}
@@ -22,7 +24,11 @@ namespace app
             auto* pInfo = ObjUtil::GetObjectInfo<ObjUpReelInfo>(document, "ObjUpReelInfo");
             auto* pParam = reinterpret_cast<SUpReelParam*>(m_pAdapter->GetData());
 
-            m_Length = pParam->m_Length;
+            m_Length = pParam->m_Length + 4.0f;
+            m_ImpulseVelocity = pParam->m_ImpulseVelocity;
+            m_OutOfControl = pParam->m_OutOfControl;
+            m_UpSpeedMax = pParam->m_UpSpeedMax;
+            m_IsOneTimeUp = pParam->m_IsOneTimeUp;
 
             fnd::GOComponent::BeginSetup(*this);
 
@@ -58,7 +64,7 @@ namespace app
                 colliInfo.m_Unk2 |= 1;
                 colliInfo.m_Unk3 = 0x20000;
 
-                colliInfo.SetLocalPosition({ 0.0f, -pParam->m_Length - 4.0f, 0.0f });
+                colliInfo.SetLocalPosition({ 0.0f, -m_Length, 0.0f });
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, colliInfo);
                 pCollider->CreateShape(colliInfo);
@@ -66,6 +72,15 @@ namespace app
 
             fnd::GOComponent::EndSetup(*this);
 
+            if (pParam->m_IsWaitUp && !GetExtUserData(eExtUserDataType_High))
+            {
+                SetHandleDistance(-11.9f);
+                ChangeState(&ObjUpReel::StateWaitUp);
+
+                return;
+            }
+
+            SetHandleDistance(-m_Length);
             ChangeState(&ObjUpReel::StateIdle);
         }
 
@@ -77,11 +92,11 @@ namespace app
             switch (msg.GetType())
             {
             case xgame::MsgHitEventCollision::MessageID:
-                return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
             case xgame::MsgPLGetHomingTargetInfo::MessageID:
-                return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
             case xgame::MsgGetExternalMovePosition::MessageID:
-                return ProcMsgGetExternalMovePosition(reinterpret_cast<xgame::MsgGetExternalMovePosition&>(msg));
+            case xgame::MsgNotifyObjectEvent::MessageID:
+                TTinyFsm::DispatchFSM(TiFsmBasicEvent<ObjUpReel>::CreateMessage(msg));
+                return true;
             default:
                 return CSetObjectListener::ProcessMessage(msg);
             }
@@ -100,90 +115,83 @@ namespace app
 
         TTinyFsm::TiFsmState_t StateIdle(const TiFsmBasicEvent<ObjUpReel>& rEvent)
         {
-            switch (rEvent.getSignal())
-            {
-            case TiFSM_SIGNAL_ENTER:
-            {
-                SetHandleDistance(-m_Length - 4.0f);
+            if (rEvent.getSignal() != TiFSM_SIGNAL_MESSAGE)
+                return FSM_TOP();
 
-                return nullptr;
+            switch (rEvent.getMessage().GetType())
+            {
+            case xgame::MsgHitEventCollision::MessageID:
+            {
+                ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(rEvent.getMessage()));
+                break;
             }
-            case TiFSM_SIGNAL_MESSAGE:
+            case xgame::MsgPLGetHomingTargetInfo::MessageID:
             {
-                switch (rEvent.getMessage().GetType())
-                {
-                case xgame::MsgHitEventCollision::MessageID:
-                {
-                    auto msg = reinterpret_cast<xgame::MsgHitEventCollision&>(rEvent.getMessage());
-
-                    m_PlayerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
-                    if (m_PlayerNo < 0)
-                        return nullptr;
-
-                    m_Move = true;
-
-                    xgame::MsgCatchPlayer catchMessage{};
-                    catchMessage.m_Unk3 = 13;
-                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, catchMessage);
-                    return nullptr;
-                }
-                case xgame::MsgGetExternalMovePosition::MessageID:
-                {
-                    MovePlayerWithHandle(reinterpret_cast<xgame::MsgGetExternalMovePosition&>(rEvent.getMessage()).m_pTransform);
-                    return nullptr;
-                }
-                case xgame::MsgPLGetHomingTargetInfo::MessageID:
-                {
-                    auto* pHandleModel = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1]);
-                    if (!pHandleModel)
-                        return nullptr;
-
-                    Matrix34 handleTransform{};
-                    pHandleModel->GetMatrix(&handleTransform);
-
-                    reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(rEvent.getMessage()).m_CursorPosition = handleTransform.GetTransVector();
-                    return nullptr;
-                }
-                }
-            }
-            case TiFSM_SIGNAL_UPDATE:
-            {
-                if (!m_Move)
-                    return nullptr;
-
-                auto pHandleVisual = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1]);
-
-                m_Time += rEvent.getFloat();
-                float position = m_Length - (m_Time * 550.0f);
-                if (position < 11.9f)
-                {
-                    position = 11.9f;
-                    ChangeState(&ObjUpReel::StateUp);
-                }
-
-                SetHandleDistance(-position);
-                return nullptr;
+                ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(rEvent.getMessage()));
+                break;
             }
             }
 
-            return nullptr;
+            return FSM_TOP();
         }
 
         TTinyFsm::TiFsmState_t StateWaitUp(const TiFsmBasicEvent<ObjUpReel>& rEvent)
         {
-            SetHandleDistance(-11.9f);
+            if (rEvent.getSignal() != TiFSM_SIGNAL_MESSAGE)
+                return FSM_TOP();
 
-            return nullptr;
+            switch (rEvent.getMessage().GetType())
+            {
+            case xgame::MsgNotifyObjectEvent::MessageID:
+            {
+                ProcMsgNotifyObjectEvent(reinterpret_cast<xgame::MsgNotifyObjectEvent&>(rEvent.getMessage()));
+                break;
+            }
+            }
+
+            return FSM_TOP();
         }
 
         TTinyFsm::TiFsmState_t StateUp(const TiFsmBasicEvent<ObjUpReel>& rEvent)
         {
             switch (rEvent.getSignal())
             {
-            case TiFSM_SIGNAL_ENTER:
+            case TiFSM_SIGNAL_UPDATE:
             {
-                m_Move = false;
-                return nullptr;
+                xgame::MsgGetPosition playerPosMsg{};
+                ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, playerPosMsg);
+
+                if (m_IsPlayerMoving)
+                {
+                    /*auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, m_PlayerNo)));
+                    float velocity = pPlayer->m_pPhysics->GetVertVelocity().y();
+
+                    if (velocity > 20.0f)
+                        return FSM_TOP();
+                    
+                    xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetForwardDirectionVector(), m_OutOfControl, 0.0f };
+                    impulseMsg.field_50.set(12);
+                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);*/
+
+                    ChangeState(&ObjUpReel::StateDown);
+
+                    return nullptr;
+                }
+
+                auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
+                float position = abs(handlePos.y()) - rEvent.getFloat() * 550.0f;
+                if (position < 11.9f && !m_IsPlayerMoving)
+                {
+                    position = 11.9f;                
+
+                    xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), static_cast<Vector3>(Vector3::UnitY() * m_ImpulseVelocity), m_OutOfControl, 0.0f };
+                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);
+
+                    m_IsPlayerMoving = true;
+                }
+
+                SetHandleDistance(-position);
+                break;
             }
             case TiFSM_SIGNAL_MESSAGE:
             {
@@ -191,41 +199,15 @@ namespace app
                 {
                 case xgame::MsgGetExternalMovePosition::MessageID:
                 {
-                    MovePlayerWithHandle(reinterpret_cast<xgame::MsgGetExternalMovePosition&>(rEvent.getMessage()).m_pTransform);
-                    return nullptr;
+                    ProcMsgGetExternalMovePosition(reinterpret_cast<xgame::MsgGetExternalMovePosition&>(rEvent.getMessage()));
+                    break;
                 }
                 }
-            }
-            case TiFSM_SIGNAL_UPDATE:
-            {
-                xgame::MsgGetPosition playerPosMsg{};
-                ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, playerPosMsg);
-
-                if (!m_Move)
-                {
-                    xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), static_cast<Vector3>(Vector3::UnitY() * 150.0f), 0.25f, 0.0f };
-                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);
-
-                    m_Move = true;
-                    return nullptr;
-                }
-
-                auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, m_PlayerNo)));
-                float velocity = pPlayer->m_pPhysics->GetVertVelocity().y();
-                if (velocity > 20.0f)
-                    return nullptr;
-
-                xgame::MsgSpringImpulse impulse2ndMsg{ playerPosMsg.GetPosition(), static_cast<Vector3>(Vector3(0.0f, 0.75f, -0.25f) * 150.0f), 0.25f, 0.0f };
-                impulse2ndMsg.field_50.set(12);
-                ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulse2ndMsg);
-
-                ChangeState(&ObjUpReel::StateDown);
-
-                return nullptr;
+                break;
             }
             }
 
-            return nullptr;
+            return FSM_TOP();
         }
 
         TTinyFsm::TiFsmState_t StateDown(const TiFsmBasicEvent<ObjUpReel>& rEvent)
@@ -234,61 +216,98 @@ namespace app
             {
             case TiFSM_SIGNAL_ENTER:
             {
-                m_Time = 0.0f;
-                return nullptr;
+                m_IsPlayerMoving = false;
             }
             case TiFSM_SIGNAL_UPDATE:
             {
-                if (m_WaitTime > 2.0f)
-                {
-                    m_WaitTime + rEvent.getFloat();
-                    return nullptr;
-                }
+                auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
 
-                m_Time += rEvent.getFloat();
-
-                Matrix34 handleMatrix{};
-                reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->GetMatrix(&handleMatrix);
-                float position = handleMatrix.GetTransVector().y() - (m_Time * 200.0f);
-                printf("%f\n", GetComponent<fnd::GOCTransform>()->GetLocalPosition().y() - m_Length - 4.0f);
-                if (position < GetComponent<fnd::GOCTransform>()->GetLocalPosition().y() -m_Length - 4.0f)
+                float position = abs(handlePos.y()) + rEvent.getFloat() * 100.0f;
+                if (position > m_Length)
                 {
-                    position = -m_Length - 4.0f;
+                    position = m_Length;
                     ChangeState(&ObjUpReel::StateIdle);
                 }
 
-                SetHandleDistance(position);
-
-                return nullptr;
+                SetHandleDistance(-position);
+                break;
             }
-            case TiFSM_SIGNAL_LEAVE:
+            case TiFSM_SIGNAL_MESSAGE:
             {
-                m_Move = false;
-                m_Time = false;
-                m_WaitTime = false;
-                return nullptr;
+                switch (rEvent.getMessage().GetType())
+                {
+                case xgame::MsgHitEventCollision::MessageID:
+                {
+                    ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(rEvent.getMessage()));
+                    break;
+                }
+                case xgame::MsgPLGetHomingTargetInfo::MessageID:
+                {
+                    ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(rEvent.getMessage()));
+                    break;
+                }
+                }
+                break;
             }
             }
 
-            return nullptr;
+            return FSM_TOP();
         }
 
-        bool ProcMsgGetExternalMovePosition(xgame::MsgGetExternalMovePosition& msg)
+        void ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
         {
-            TTinyFsm::DispatchFSM(TiFsmBasicEvent<ObjUpReel>::CreateMessage(msg));
-            return true;
+            m_PlayerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
+            if (m_PlayerNo < 0)
+                return;
+
+            ChangeState(&ObjUpReel::StateUp);
+
+            xgame::MsgCatchPlayer catchMessage{};
+            catchMessage.m_Unk3 = 13;
+            ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, catchMessage);
         }
 
-        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
+        void ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
         {
-            TTinyFsm::DispatchFSM(TiFsmBasicEvent<ObjUpReel>::CreateMessage(msg));
-            return true;
+            auto* pHandle = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1]);
+            if (!pHandle)
+                return;
+
+            Matrix34 handleTransform{};
+            pHandle->GetMatrix(&handleTransform);
+
+            msg.m_CursorPosition = handleTransform.GetTransVector();
         }
 
-        bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
+        void ProcMsgGetExternalMovePosition(xgame::MsgGetExternalMovePosition& msg)
         {
-            TTinyFsm::DispatchFSM(TiFsmBasicEvent<ObjUpReel>::CreateMessage(msg));
-            return true;
+            auto* pHandleModel = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1]);
+            if (!pHandleModel)
+                return;
+
+            pHandleModel->GetMatrix(msg.m_pTransform);
+
+            Quaternion rotation(*msg.m_pTransform);
+            rotation = rotation * Eigen::AngleAxisf(TO_RAD(180), Vector3::UnitY());
+
+            for (size_t i = 0; i < 3; i++)
+                msg.m_pTransform->SetColumn(i, static_cast<Vector3>(rotation.toRotationMatrix().row(i)));
+
+            msg.m_pTransform->GetTransVector().y() += -10.5f;
+        }
+
+        void ProcMsgNotifyObjectEvent(xgame::MsgNotifyObjectEvent& msg)
+        {
+            if (!msg.GetEventType())
+                return;
+            
+            SetExtUserData(eExtUserDataType_High, 1);
+            ChangeState(&ObjUpReel::StateDown);
+        }
+
+        Vector3 GetForwardDirectionVector()
+        {
+            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3(0.0f, 0.65f, -0.35f) * m_ImpulseVelocity);
         }
 
         void MovePlayerWithHandle(Matrix34* transform)
