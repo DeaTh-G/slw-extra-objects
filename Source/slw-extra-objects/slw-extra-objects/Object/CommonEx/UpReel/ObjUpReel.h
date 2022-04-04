@@ -221,13 +221,16 @@ namespace app
             {
             case TiFSM_SIGNAL_ENTER:
             {
-                m_IsPlayerMoving = false;
+                m_PositionOffset = 0.0f;
+                break;
             }
             case TiFSM_SIGNAL_UPDATE:
             {
                 auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
 
-                float position = abs(handlePos.y()) + rEvent.getFloat() * 100.0f;
+                m_PositionOffset += rEvent.getFloat() * 5.0f;
+
+                float position = abs(handlePos.y()) + m_PositionOffset;
                 if (position > m_Length)
                 {
                     position = m_Length;
