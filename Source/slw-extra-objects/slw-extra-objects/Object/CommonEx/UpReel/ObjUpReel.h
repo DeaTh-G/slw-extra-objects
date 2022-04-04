@@ -11,6 +11,8 @@ namespace app
         float m_UpSpeedMax{};
         bool m_IsOneTimeUp{};
         int m_PlayerNo{};
+        float m_PositionOffset{};
+        float m_Time{};
         bool m_IsPlayerMoving{};
 
     public:
@@ -156,41 +158,44 @@ namespace app
         {
             switch (rEvent.getSignal())
             {
+            case TiFSM_SIGNAL_ENTER:
+            {
+                m_PositionOffset = 0.0f;
+                m_Time = 0.0f;
+                m_IsPlayerMoving = false;
+                break;
+            }
             case TiFSM_SIGNAL_UPDATE:
             {
+                auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
+
+                m_PositionOffset += rEvent.getFloat() * m_UpSpeedMax * 0.2f;
+                if (abs(handlePos.y()) - m_PositionOffset >= 11.9f)
+                {
+                    SetHandleDistance(-(abs(handlePos.y()) - m_PositionOffset));
+                    return FSM_TOP();
+                }
+
+                SetHandleDistance(-11.9f);
+
                 xgame::MsgGetPosition playerPosMsg{};
                 ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, playerPosMsg);
 
-                if (m_IsPlayerMoving)
+                if (!m_IsPlayerMoving)
                 {
-                    /*auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, m_PlayerNo)));
-                    float velocity = pPlayer->m_pPhysics->GetVertVelocity().y();
-
-                    if (velocity > 20.0f)
-                        return FSM_TOP();
-                    
-                    xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetForwardDirectionVector(), m_OutOfControl, 0.0f };
-                    impulseMsg.field_50.set(12);
-                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);*/
-
-                    ChangeState(&ObjUpReel::StateDown);
-
-                    return nullptr;
-                }
-
-                auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
-                float position = abs(handlePos.y()) - rEvent.getFloat() * 550.0f;
-                if (position < 11.9f && !m_IsPlayerMoving)
-                {
-                    position = 11.9f;                
-
                     xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), static_cast<Vector3>(Vector3::UnitY() * m_ImpulseVelocity), m_OutOfControl, 0.0f };
                     ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);
 
                     m_IsPlayerMoving = true;
                 }
 
-                SetHandleDistance(-position);
+                if (m_IsOneTimeUp)
+                    return FSM_TOP();
+
+                m_Time += rEvent.getFloat();
+                if (m_Time > 1.0f)
+                    ChangeState(&ObjUpReel::StateDown);
+
                 break;
             }
             case TiFSM_SIGNAL_MESSAGE:
@@ -305,9 +310,9 @@ namespace app
             ChangeState(&ObjUpReel::StateDown);
         }
 
-        Vector3 GetForwardDirectionVector()
+        Vector3 GetForwardDirectionVector(float up, float forward)
         {
-            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3(0.0f, 0.65f, -0.35f) * m_ImpulseVelocity);
+            return static_cast<Vector3>(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3(0.0f, up, forward) * m_ImpulseVelocity);
         }
 
         void MovePlayerWithHandle(Matrix34* transform)
