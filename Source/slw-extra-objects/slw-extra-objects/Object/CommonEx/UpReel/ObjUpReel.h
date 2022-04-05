@@ -13,7 +13,6 @@ namespace app
         int m_PlayerNo{};
         float m_PositionOffset{};
         float m_Time{};
-        bool m_IsPlayerMoving{};
 
     public:
         ObjUpReel() {}
@@ -161,8 +160,6 @@ namespace app
             case TiFSM_SIGNAL_ENTER:
             {
                 m_PositionOffset = 0.0f;
-                m_Time = 0.0f;
-                m_IsPlayerMoving = false;
                 break;
             }
             case TiFSM_SIGNAL_UPDATE:
@@ -178,23 +175,14 @@ namespace app
 
                 SetHandleDistance(-11.9f);
 
-                xgame::MsgGetPosition playerPosMsg{};
-                ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, playerPosMsg);
+                auto position = GetComponent<fnd::GOCTransform>()->GetLocalPosition();
+                position.y() += 2.9f;
 
-                if (!m_IsPlayerMoving)
-                {
-                    xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), static_cast<Vector3>(Vector3::UnitY() * m_ImpulseVelocity), m_OutOfControl, 0.0f };
-                    ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);
+                xgame::MsgSpringImpulse impulseMsg{ position, GetForwardDirectionVector(1.0f, -0.4f), m_OutOfControl, 0.0f };
+                impulseMsg.field_50.set(12);
+                ObjUtil::SendMessageImmToPlayer(*this, m_PlayerNo, impulseMsg);
 
-                    m_IsPlayerMoving = true;
-                }
-
-                if (m_IsOneTimeUp)
-                    return FSM_TOP();
-
-                m_Time += rEvent.getFloat();
-                if (m_Time > 1.0f)
-                    ChangeState(&ObjUpReel::StateDown);
+                ChangeState(&ObjUpReel::StateDown);
 
                 break;
             }
@@ -222,10 +210,18 @@ namespace app
             case TiFSM_SIGNAL_ENTER:
             {
                 m_PositionOffset = 0.0f;
+                m_Time = 0.0f;
                 break;
             }
             case TiFSM_SIGNAL_UPDATE:
             {
+                if (m_IsOneTimeUp)
+                    return FSM_TOP();
+
+                m_Time += rEvent.getFloat();
+                if (m_Time < 0.45f)
+                    return FSM_TOP();
+
                 auto handlePos = reinterpret_cast<fnd::GOCVisualModel*>(GetComponent<fnd::GOCVisualContainer>()->m_Visuals[1])->m_Transform.m_Mtx.GetTransVector();
 
                 m_PositionOffset += rEvent.getFloat() * 5.0f;
@@ -299,7 +295,7 @@ namespace app
             rotation = rotation * Eigen::AngleAxisf(TO_RAD(180), Vector3::UnitY());
 
             for (size_t i = 0; i < 3; i++)
-                msg.m_pTransform->SetColumn(i, static_cast<Vector3>(rotation.toRotationMatrix().row(i)));
+                msg.m_pTransform->SetColumn(i, static_cast<Vector3>(rotation.toRotationMatrix().col(i)));
 
             msg.m_pTransform->GetTransVector().y() += -10.5f;
         }
