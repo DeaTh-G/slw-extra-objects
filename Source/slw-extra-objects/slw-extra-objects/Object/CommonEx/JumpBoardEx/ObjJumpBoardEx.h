@@ -5,9 +5,9 @@ namespace app
     class ObjJumpBoardEx : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpBoardSizes[] = { { 2.48f, 0.2f, 3.0f }, { 2.48f, 0.42f, 3.5f }, { 5.64f, 0.46f, 13.65f }, { 15.4f, 0.46f, 30.2f } };
-        inline static Vector3 ms_JumpBoardPositions[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
-        inline static float ms_JumpBoardRotations[] = { -15, -30, -30, -30 };
+        inline static Vector3 ms_Sizes[] = { { 2.48f, 0.2f, 3.0f }, { 2.48f, 0.42f, 3.5f }, { 5.64f, 0.46f, 13.65f }, { 15.4f, 0.46f, 30.2f } };
+        inline static Vector3 ms_Positions[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
+        inline static float ms_Rotations[] = { -15, -30, -30, -30 };
 
     protected:
         float m_ImpulseSpeedOnSpindash{};
@@ -29,7 +29,7 @@ namespace app
             fnd::GOComponent::Create<game::GOCSound>(*this);
 
             auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpBoardExInfo>(document, "ObjJumpBoardExInfo");
-            auto pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
 
             m_ImpulseSpeedOnSpindash = pParam->m_ImpulseSpeedOnSpindash;
             m_ImpulseSpeedOnNormal = pParam->m_ImpulseSpeedOnNormal;
@@ -44,14 +44,15 @@ namespace app
             {
                 fnd::GOCVisualModel::Description description{};
                 description.m_Model = pInfo->m_Models[m_Type];
+                description.field_0C = 1;
 
                 pVisual->Setup(description);
 
                 auto* pBlender = pVisual->SetTexSrtBlender({ ObjJumpBoardExInfo::ms_BeltAnimCount + 1 });
                 for (size_t i = 0; i < ObjJumpBoardExInfo::ms_BeltAnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_BeltAnimations[i], 1 });
+                    pBlender->CreateControl({ pInfo->m_BeltAnims[i], 1 });
 
-                pBlender->CreateControl({ pInfo->m_ArrowAnimation, 1 });
+                pBlender->CreateControl({ pInfo->m_ArrowAnim, 1 });
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
@@ -60,11 +61,11 @@ namespace app
                 pCollider->Setup({ 1 });
 
                 game::ColliBoxShapeCInfo colliInfo{};
-                colliInfo.m_Size = ms_JumpBoardSizes[m_Type];
+                colliInfo.m_Size = ms_Sizes[m_Type];
                 colliInfo.m_Unk2 |= 1;
 
-                colliInfo.SetLocalPosition(ms_JumpBoardPositions[m_Type]);
-                colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_JumpBoardRotations[m_Type]), Vector3::UnitX()));
+                colliInfo.SetLocalPosition(ms_Positions[m_Type]);
+                colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_Rotations[m_Type]), Vector3::UnitX()));
 
                 ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
 
@@ -176,7 +177,7 @@ namespace app
 
         Quaternion GetLaunchOffset()
         {
-            return Eigen::AngleAxisf(TO_RAD(ms_JumpBoardRotations[m_Type]), Vector3::UnitX());
+            return Eigen::AngleAxisf(TO_RAD(ms_Rotations[m_Type]), Vector3::UnitX());
         }
     };
 }

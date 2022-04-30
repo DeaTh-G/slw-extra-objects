@@ -14,13 +14,13 @@ namespace app
 
         hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
         ResPhysicsMesh m_Colliders[ARRAYSIZE(ms_ModelNames)]{};
-        hh::gfx::res::ResAnimTexSrt m_BeltAnimations[ARRAYSIZE(ms_BeltAnimNames)]{};
-        hh::gfx::res::ResAnimTexSrt m_ArrowAnimation{};
+        hh::gfx::res::ResAnimTexSrt m_BeltAnims[ARRAYSIZE(ms_BeltAnimNames)]{};
+        hh::gfx::res::ResAnimTexSrt m_ArrowAnim{};
 
     protected:
         void Initialize(GameDocument& document) override
         {
-            hh::ut::PackFile packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
+            auto packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
             for (size_t i = 0; i < ms_ModelCount; i++)
             {
                 m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
@@ -28,9 +28,9 @@ namespace app
             }
 
             for (size_t i = 0; i < ms_BeltAnimCount; i++)
-                m_BeltAnimations[i] = ObjUtil::GetTexSrtAnimationResource(ms_BeltAnimNames[i], packFile);
+                m_BeltAnims[i] = ObjUtil::GetTexSrtAnimationResource(ms_BeltAnimNames[i], packFile);
 
-            m_ArrowAnimation = ObjUtil::GetTexSrtAnimationResource("cmn_obj_jumpboard_arrow", packFile);
+            m_ArrowAnim = ObjUtil::GetTexSrtAnimationResource("cmn_obj_jumpboard_arrow", packFile);
         }
 
         const char* GetInfoName() override
