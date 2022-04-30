@@ -12,7 +12,7 @@ namespace app
     protected:
         void Initialize(GameDocument& document) override
         {
-            hh::ut::PackFile packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
+            auto packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
             m_Model = ObjUtil::GetModelResource("cmn_obj_widespring", packFile);
             m_Skeleton = ObjUtil::GetSkeletonResource("cmn_obj_widespring", packFile);
             m_Animation = ObjUtil::GetAnimationResource("cmn_obj_widespring", packFile);
