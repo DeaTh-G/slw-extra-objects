@@ -47,11 +47,11 @@ namespace app
 
                 pVisual->Setup(description);
                 
-                pVisual->SetMaterialAnimation({ pInfo->m_MaterialAnimations[m_Type], 1 });
+                pVisual->SetMaterialAnimation({ pInfo->m_MatAnims[m_Type], 1 });
 
-                auto pBlender = pVisual->SetTexSrtBlender({ modelAnimCount });
+                auto* pBlender = pVisual->SetTexSrtBlender({ modelAnimCount });
                 for (size_t i = 0; i < modelAnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_TextureAnimations[m_Type * 4 + i], 1 });
+                    pBlender->CreateControl({ pInfo->m_TexAnims[m_Type * 4 + i], 1 });
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
