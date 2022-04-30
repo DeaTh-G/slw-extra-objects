@@ -43,6 +43,12 @@
     <Filter Include="Header Files\Object\CommonEx\UpReel">
       <UniqueIdentifier>{dfd46ed4-2967-44b7-8637-3d7af7ada4a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Player">
+      <UniqueIdentifier>{1dbeaeeb-a197-47cd-9b77-e681710562b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Player\Info">
+      <UniqueIdentifier>{5c0d27e9-c980-40a4-be04-35a7104da27f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -114,6 +120,9 @@
     <ClInclude Include="Object\CommonEx\UpReel\UpReelParam.h">
       <Filter>Header Files\Object\CommonEx\UpReel</Filter>
     </ClInclude>
+    <ClInclude Include="Player\Info\SonicExInfo.h">
+      <Filter>Header Files\Player\Info</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -129,6 +138,9 @@
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
     <ClCompile Include="Patches\StageDataInitializer.cpp">
+      <Filter>Source Files\Patches</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\SonicInfo.cpp">
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
   </ItemGroup>

@@ -2,6 +2,9 @@
 
 #include "utils.h"
 
+// SonicEx
+#include "Player/Info/SonicExInfo.h"
+
 // Dash Ring
 #include "Object/CommonEx/DashRing/DashRingParam.h"
 #include "Object/CommonEx/DashRing/ObjDashRingInfo.h"

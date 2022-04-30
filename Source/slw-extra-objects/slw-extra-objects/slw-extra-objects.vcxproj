@@ -52,13 +52,14 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);F:\Source Codes\slw-extra-objects\Depends\LWAPI\Sonic2013;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,6 +118,7 @@
     <ClInclude Include="Patches\Functions.h" />
     <ClInclude Include="Patches\Patches.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Player\Info\SonicExInfo.h" />
     <ClInclude Include="slw-extra-objects.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -124,6 +126,7 @@
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="Patches\CSetObjectFactory.cpp" />
     <ClCompile Include="Patches\CStateBase.cpp" />
+    <ClCompile Include="Patches\SonicInfo.cpp" />
     <ClCompile Include="Patches\StageDataInitializer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
