@@ -8,10 +8,10 @@ namespace app
     class ObjJumpPanel : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_JumpPanelSizes[] = { { 8.6f, 0.85f, 19.6f }, { 8.6f, 0.85f, 5.5f }, { 8.6f, 0.85f, 15.2f } };
-        inline static Vector3 ms_JumpPanelPositions[] = { { 0.0f, 0.0f, 19.0f }, { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
-        inline static float ms_JumpPanelURotations[] = { -15.0f, -25.0f };
-        inline static float ms_JumpPanelLaunchOffsets[] = { -5.0f, -30.0f };
+        inline static Vector3 ms_Sizes[] = { { 8.6f, 0.85f, 19.6f }, { 8.6f, 0.85f, 5.5f }, { 8.6f, 0.85f, 15.2f } };
+        inline static Vector3 ms_Positions[] = { { 0.0f, 0.0f, 19.0f }, { 0.0f, 1.4f, 4.8f }, { 0.0f, 9.2f, 23.755f } };
+        inline static float ms_UpRotations[] = { -15.0f, -25.0f };
+        inline static float ms_LaunchOffsets[] = { -5.0f, -30.0f };
 
     protected:
         float m_FirstSpeed{};
@@ -55,7 +55,7 @@ namespace app
                 auto* pBlender = pVisual->SetTexSrtBlender({ ObjJumpPanelInfo::ms_AnimCount });
 
                 for (size_t i = 0; i < ObjJumpPanelInfo::ms_AnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_TextureAnimations[i], 1 });
+                    pBlender->CreateControl({ pInfo->m_TexAnims[i], 1 });
             }
 
             auto* pCollider = GetComponent<game::GOCCollider>();
@@ -65,13 +65,13 @@ namespace app
                 for (size_t i = 0; i < pCollider->m_Shapes.capacity(); i++)
                 {
                     game::ColliBoxShapeCInfo colliInfo{};
-                    colliInfo.m_Size = ms_JumpPanelSizes[m_Type + i];
+                    colliInfo.m_Size = ms_Sizes[m_Type + i];
                     colliInfo.m_Unk2 |= 1;
 
-                    colliInfo.SetLocalPosition(ms_JumpPanelPositions[m_Type + i]);
+                    colliInfo.SetLocalPosition(ms_Positions[m_Type + i]);
 
                     if (m_Type == SJumpPanelParam::eType_Upwards)
-                        colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_JumpPanelURotations[i]), Vector3::UnitX()));
+                        colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_UpRotations[i]), Vector3::UnitX()));
 
                     ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
                     pCollider->CreateShape(colliInfo);
@@ -160,7 +160,7 @@ namespace app
 
         Quaternion GetLaunchOffset()
         {
-            return Eigen::AngleAxisf(TO_RAD(ms_JumpPanelLaunchOffsets[m_Type]), Vector3::UnitX());
+            return Eigen::AngleAxisf(TO_RAD(ms_LaunchOffsets[m_Type]), Vector3::UnitX());
         }
 
         Quaternion GetPitchCorrection()
