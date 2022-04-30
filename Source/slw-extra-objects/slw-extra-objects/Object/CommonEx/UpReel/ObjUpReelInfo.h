@@ -16,7 +16,7 @@ namespace app
     protected:
         void Initialize(GameDocument& document) override
         {
-            hh::ut::PackFile packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
+            auto packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
 
             for (size_t i = 0; i < ms_ModelCount; i++)
                 m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
