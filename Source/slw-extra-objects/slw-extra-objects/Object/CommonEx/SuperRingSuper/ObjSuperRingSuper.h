@@ -5,43 +5,47 @@ namespace app
 {
     class ObjSuperRingSuper : public CSetObjectListener
     {
+    protected:
+        inline static const size_t ms_ShapeCount = 1;
+        inline static const float ms_CollisionRadius = 5.0f;
+        inline static const char* ms_pEffectName = "ef_ob_com_yh1_ringget_ss";
+        inline static const char* ms_pSoundName = "obj_superring";
+
     public:
-        void AddCallback(GameDocument& document) override
+        void AddCallback(GameDocument& in_rDocument) override
         {
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
             fnd::GOComponent::Create<game::GOCCollider>(*this);
             fnd::GOComponent::Create<game::GOCEffect>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
             
-            auto* pInfo = ObjUtil::GetObjectInfo<ObjSuperRingSuperInfo>(document, "ObjSuperRingSuperInfo");
+            auto* pInfo = ObjUtil::GetObjectInfo<ObjSuperRingSuperInfo>(in_rDocument);
 
             fnd::GOComponent::BeginSetup(*this);
 
-            auto* pVisual = GetComponent<fnd::GOCVisualModel>();
-            if (pVisual)
+            if (auto* pVisualGoc = GetComponent<fnd::GOCVisualModel>())
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Model;
+                description.m_Model = pInfo->Model;
 
-                pVisual->Setup(description);
+                pVisualGoc->Setup(description);
             }
 
-            auto* pManager = document.GetService<Gimmick::CRingManager>();
+            auto* pManager = in_rDocument.GetService<Gimmick::CRingManager>();
             pManager->RegisterRotateRing(this);
             
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (pCollider)
+            if (auto* pColliderGoc = GetComponent<game::GOCCollider>())
             {
-                game::GOCCollider::Description description{ 1 };
-                pCollider->Setup(description);
+                game::GOCCollider::Description description{ ms_ShapeCount };
+                pColliderGoc->Setup(description);
 
-                game::ColliSphereShapeCInfo colliInfo;
-                colliInfo.m_Radius = 5;
-                colliInfo.m_Unk2 |= 1;
-                colliInfo.m_Unk3 = 0x20000;
+                game::ColliSphereShapeCInfo collisionInfo;
+                collisionInfo.m_Radius = ms_CollisionRadius;
+                collisionInfo.m_Unk2 |= 1;
+                collisionInfo.m_Unk3 = 0x20000;
                 
-                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, colliInfo);
-                pCollider->CreateShape(colliInfo);
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, collisionInfo);
+                pColliderGoc->CreateShape(collisionInfo);
             }
 
             game::GOCEffect::SimpleSetup(this, 0, false);
@@ -50,31 +54,29 @@ namespace app
             fnd::GOComponent::EndSetup(*this);
         }
 
-        bool ProcessMessage(fnd::Message& msg) override
+        bool ProcessMessage(fnd::Message& in_rMessage) override
         {
-            if (PreProcessMessage(msg))
+            if (PreProcessMessage(in_rMessage))
                 return true;
 
-            switch (msg.GetType())
+            switch (in_rMessage.GetType())
             {
-            case xgame::MsgHitEventCollision::MessageID:
-                return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
-            default:
-                return CSetObjectListener::ProcessMessage(msg);
+            case xgame::MsgHitEventCollision::MessageID:        return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(in_rMessage));
+            default:                                            return CSetObjectListener::ProcessMessage(in_rMessage);
             }
         }
 
     private:
-        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
+        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& in_rMessage)
         {
-            xgame::MsgTakeObject takeMsg{ (xgame::MsgTakeObject::EType)19 };
-            takeMsg.SetShapeUserID(msg.m_pOther->m_ID);
-            SendMessageImm(msg.m_Sender, takeMsg);
-            if (!takeMsg.m_Taken)
+            xgame::MsgTakeObject msg{ (xgame::MsgTakeObject::EType)19 };
+            msg.SetShapeUserID(in_rMessage.m_pOther->m_ID);
+            SendMessageImm(in_rMessage.m_Sender, msg);
+            if (!msg.m_Taken)
                 return false;
 
-            GetComponent<game::GOCEffect>()->CreateEffect("ef_ob_com_yh1_ringget_ss");
-            GetComponent<game::GOCSound>()->Play3D("obj_superring", {}, 0);
+            GetComponent<game::GOCEffect>()->CreateEffect(ms_pEffectName);
+            GetComponent<game::GOCSound>()->Play3D(ms_pSoundName, 0.0f);
 
             SetStatusRetire();
             Kill();

@@ -5,28 +5,32 @@ namespace app
     class ObjUpReelInfo : public CObjInfo
     {
     private:
-        inline static const char* ms_ModelNames[] = { "cmn_obj_upreel_stand", "cmn_obj_upreel_handle", "cmn_obj_upreel_wire" };
+        inline static const char* ms_pPackfileName = "CommonObjectEx.pac";
+        inline static const char* ms_pModelNames[] = { "cmn_obj_upreel_stand", "cmn_obj_upreel_handle", "cmn_obj_upreel_wire" };
+        inline static const char* ms_pWireSkeletonName = "cmn_obj_upreel_wire";
 
     public:
-        inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
+        inline static const char* ms_pName = "ObjUpReelInfo";
 
-        hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
-        hh::gfx::res::ResSkeleton m_WireSkeleton{};
+        inline static size_t ms_ModelCount = ARRAYSIZE(ms_pModelNames);
+
+        hh::gfx::res::ResModel Models[ARRAYSIZE(ms_pModelNames)]{};
+        hh::gfx::res::ResSkeleton WireSkeleton{};
 
     protected:
-        void Initialize(GameDocument& document) override
+        void Initialize(GameDocument& in_rDocument) override
         {
-            auto packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
+            auto packFile = ObjUtil::GetPackFile(ms_pPackfileName);
 
             for (size_t i = 0; i < ms_ModelCount; i++)
-                m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
+                Models[i] = ObjUtil::GetModelResource(ms_pModelNames[i], packFile);
 
-            m_WireSkeleton = ObjUtil::GetSkeletonResource("cmn_obj_upreel_wire", packFile);
+            WireSkeleton = ObjUtil::GetSkeletonResource(ms_pWireSkeletonName, packFile);
         }
 
         const char* GetInfoName() override
         {
-            return "ObjUpReelInfo";
+            return ms_pName;
         }
     };
 }

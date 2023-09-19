@@ -5,10 +5,10 @@ namespace app
 {
     struct SWideSpringParam
     {
-        float m_FirstSpeed{};
-        float m_KeepVelocityDistance{};
-        float m_OutOfControl{};
-        bool m_IsEventOn{};
+        float FirstSpeed{};
+        float KeepVelocityDistance{};
+        float OutOfControl{};
+        bool IsEventOn{};
     };
 
     static void paramMap_WideSpring(SetEd::CResClass rClass)

@@ -5,9 +5,19 @@ namespace app
     class ObjWideSpring : public CSetObjectListener
     {
     protected:
-        float m_FirstSpeed{};
-        float m_KeepVelocityDistance{};
-        float m_OutOfControl{};
+        inline static const size_t ms_AnimationCount = 1;
+        inline static const size_t ms_ShapeCount = 1;
+        inline static const float ms_CollisionRadius = 6.0f;
+        inline static const float ms_CollisionHeight = 12.0f;
+        inline static const csl::math::Vector3 ms_CollisionOffset = { 0.0f, 3.5f, 0.0f };
+        inline static const csl::math::Quaternion ms_CollisionRotation = { Eigen::AngleAxisf(TO_RAD(90.0f), Vector3::UnitZ()) };
+        inline static const char* ms_pAnimationName = "HIT";
+        inline static const char* ms_pSoundName = "obj_spring";
+
+    public:
+        float FirstSpeed{};
+        float KeepVelocityDistance{};
+        float OutOfControl{};
 
     public:
         ObjWideSpring()
@@ -15,62 +25,59 @@ namespace app
             SetProperty(0x4002, { 9 });
         }
 
-        void AddCallback(GameDocument& document) override
+        void AddCallback(GameDocument& in_rDocument) override
         {
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
             fnd::GOComponent::Create<game::GOCCollider>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
             fnd::GOComponent::Create<game::GOCAnimationSimple>(*this);
 
-            auto* pInfo = ObjUtil::GetObjectInfo<ObjWideSpringInfo>(document, "ObjWideSpringInfo");
-            auto* pParam = reinterpret_cast<SWideSpringParam*>(m_pAdapter->GetData());
+            auto* pInfo = ObjUtil::GetObjectInfo<ObjWideSpringInfo>(in_rDocument);
+            auto* pParam = GetAdapter()->GetData<SWideSpringParam>();
 
-            m_FirstSpeed = pParam->m_FirstSpeed;
-            m_KeepVelocityDistance = pParam->m_KeepVelocityDistance;
-            m_OutOfControl = pParam->m_OutOfControl;
+            FirstSpeed = pParam->FirstSpeed;
+            KeepVelocityDistance = pParam->KeepVelocityDistance;
+            OutOfControl = pParam->OutOfControl;
 
             fnd::GOComponent::BeginSetup(*this);
 
-            auto* pVisual = GetComponent<fnd::GOCVisualModel>();
-            if (pVisual)
+            if (auto* pVisualGoc = GetComponent<fnd::GOCVisualModel>())
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Model;
-                description.m_Skeleton = pInfo->m_Skeleton;
+                description.m_Model = pInfo->Model;
+                description.m_Skeleton = pInfo->Skeleton;
 
-                pVisual->Setup(description);
+                pVisualGoc->Setup(description);
 
-                auto* pAnimation = GetComponent<game::GOCAnimationSimple>();
-                if (pAnimation)
+                if (auto* pAnimationGoc = GetComponent<game::GOCAnimationSimple>())
                 {
-                    pAnimation->Setup({ 1 });
-                    pAnimation->Add("HIT", pInfo->m_Animation, game::PlayPolicy::Once);
-                    pVisual->AttachAnimation(pAnimation);
+                    pAnimationGoc->Setup({ ms_AnimationCount });
+                    pAnimationGoc->Add(ms_pAnimationName, pInfo->Animation, game::PlayPolicy::Once);
+                    pVisualGoc->AttachAnimation(pAnimationGoc);
                 }
             }
 
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (pCollider)
+            if (auto* pColliderGoc = GetComponent<game::GOCCollider>())
             {
-                pCollider->Setup({ 1 });
+                pColliderGoc->Setup({ 1 });
 
-                game::ColliCapsuleShapeCInfo colliInfo{};
-                colliInfo.m_Radius = 6.0f;
-                colliInfo.m_Height = 12.0f;
-                colliInfo.m_Unk2 |= 1;
-                colliInfo.m_Unk3 = 0x20000;
+                game::ColliCapsuleShapeCInfo collisionInfo{};
+                collisionInfo.m_Radius = ms_CollisionRadius;
+                collisionInfo.m_Height = ms_CollisionHeight;
+                collisionInfo.m_Unk2 |= 1;
+                collisionInfo.m_Unk3 = 0x20000;
 
-                colliInfo.SetLocalPosition({ 0.0f, 3.5f, 0.0f });
-                colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(90.0f), Vector3::UnitZ()));
+                collisionInfo.SetLocalPosition(ms_CollisionOffset);
+                collisionInfo.SetLocalRotation(ms_CollisionRotation);
 
-                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, colliInfo);
-                pCollider->CreateShape(colliInfo);
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Default, collisionInfo);
+                pColliderGoc->CreateShape(collisionInfo);
             }
 
-            if (pParam->m_IsEventOn && !GetExtUserData(eExtUserDataType_High))
+            if (pParam->IsEventOn && !GetExtUserData(eExtUserDataType_High))
             {
-                pVisual->SetVisibility(false);
-                pCollider->SetEnable(false);
+                GetComponent<fnd::GOCVisualModel>()->SetVisible(false);
+                GetComponent<game::GOCCollider>()->SetEnable(false);
             }
 
             game::GOCSound::SimpleSetup(this, 0, 0);
@@ -78,57 +85,53 @@ namespace app
             fnd::GOComponent::EndSetup(*this);
         }
 
-        bool ProcessMessage(fnd::Message& msg) override
+        bool ProcessMessage(fnd::Message& in_rMessage) override
         {
-            if (PreProcessMessage(msg))
+            if (PreProcessMessage(in_rMessage))
                 return true;
 
-            switch (msg.GetType())
+            switch (in_rMessage.GetType())
             {
-            case xgame::MsgHitEventCollision::MessageID:
-                return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
-            case xgame::MsgPLGetHomingTargetInfo::MessageID:
-                return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(msg));
-            case xgame::MsgNotifyObjectEvent::MessageID:
-                return ProcMsgNotifyObjectEvent(reinterpret_cast<xgame::MsgNotifyObjectEvent&>(msg));
-            default:
-                return CSetObjectListener::ProcessMessage(msg);
+            case xgame::MsgHitEventCollision::MessageID:            return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(in_rMessage));
+            case xgame::MsgPLGetHomingTargetInfo::MessageID:        return ProcMsgPLGetHomingTargetInfo(reinterpret_cast<xgame::MsgPLGetHomingTargetInfo&>(in_rMessage));
+            case xgame::MsgNotifyObjectEvent::MessageID:            return ProcMsgNotifyObjectEvent(reinterpret_cast<xgame::MsgNotifyObjectEvent&>(in_rMessage));
+            default:                                                return CSetObjectListener::ProcessMessage(in_rMessage);
             }
         }
 
     private:
-        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
+        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& in_rMessage)
         {
-            int playerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
+            int playerNo = ObjUtil::GetPlayerNo(*GetDocument(), in_rMessage.m_Sender);
             if (playerNo < 0)
                 return false;
 
-            GetComponent<game::GOCSound>()->Play3D("obj_spring", {}, 0);
-            GetComponent<game::GOCAnimationSimple>()->SetAnimation("HIT");
+            GetComponent<game::GOCSound>()->Play3D(ms_pSoundName, 0.0f);
+            GetComponent<game::GOCAnimationSimple>()->SetAnimation(ms_pAnimationName);
 
-            xgame::MsgGetPosition playerPosMsg{};
+            csl::math::Vector3 playerPosition{};
+            xgame::MsgGetPosition playerPosMsg{ playerPosition };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
 
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), m_OutOfControl, m_KeepVelocityDistance / m_FirstSpeed };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(), OutOfControl, KeepVelocityDistance / FirstSpeed };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
         }
 
-        bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& msg)
+        bool ProcMsgPLGetHomingTargetInfo(xgame::MsgPLGetHomingTargetInfo& in_rMessage)
         {
-            auto cursorPos = GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk1.m_Mtx * Vector4(0, 3.5f, 0, 1);
-            msg.m_CursorPosition = Vector3(cursorPos.x(), cursorPos.y(), cursorPos.z());
+            in_rMessage.m_CursorPosition = { GetComponent<fnd::GOCTransform>()->m_Frame.m_Unk3.m_Mtx * Vector4(0.0f, 3.5f, 0.0f, 1.0f) };
 
             return true;
         }
 
-        bool ProcMsgNotifyObjectEvent(xgame::MsgNotifyObjectEvent& msg)
+        bool ProcMsgNotifyObjectEvent(xgame::MsgNotifyObjectEvent& in_rMessage)
         {
-            if (!msg.GetEventType())
+            if (!in_rMessage.GetEventType())
                 return false;
 
-            GetComponent<fnd::GOCVisualModel>()->SetVisibility(true);
+            GetComponent<fnd::GOCVisualModel>()->SetVisible(true);
             GetComponent<game::GOCCollider>()->SetEnable(true);
 
             SetExtUserData(eExtUserDataType_High, 1);
@@ -136,9 +139,9 @@ namespace app
             return true;
         }
 
-        Vector3 GetDirectionVector()
+        csl::math::Vector3 GetDirectionVector()
         {
-            return static_cast<Vector3>(Vector3::UnitY() * m_FirstSpeed);
+            return { csl::math::Vector3::UnitY() * FirstSpeed };
         }
     };
 }

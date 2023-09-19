@@ -5,83 +5,83 @@ namespace app
     class ObjJumpBoardEx : public CSetObjectListener
     {
     private:
-        inline static Vector3 ms_Sizes[] = { { 2.48f, 0.2f, 3.0f }, { 2.48f, 0.42f, 3.5f }, { 5.64f, 0.46f, 13.65f }, { 15.4f, 0.46f, 30.2f } };
-        inline static Vector3 ms_Positions[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
-        inline static float ms_Rotations[] = { -15, -30, -30, -30 };
+        inline static const size_t ms_TextureAnimationCount = 3;
+        inline static const size_t ms_ShapeCount = 1;
+        inline static const size_t ms_PhysicsShapeCount = 1;
+        inline static const Vector3 ms_CollisionSizes[] = { { 2.48f, 0.2f, 3.0f }, { 2.48f, 0.42f, 3.5f }, { 5.64f, 0.46f, 13.65f }, { 15.4f, 0.46f, 30.2f } };
+        inline static const Vector3 ms_CollisionOffsets[] = { { 0.0f, 2.672f, 7.585f }, { 0.0f, 4.622f, 7.397f }, { 0.0f, 7.176f, 11.148f }, { 0.0f, 16.403f, 24.368f } };
+        inline static const float ms_CollisionRotations[] = { -15.0f, -30.0f, -30.0f, -30.0f };
 
     protected:
-        float m_ImpulseSpeedOnSpindash{};
-        float m_ImpulseSpeedOnNormal{};
-        float m_OutOfControl{};
-        bool m_IsStand{};
-        SJumpBoardExParam::EType m_Type{};
-        bool m_IsOn{ true };
-        float m_Time{};
+        float ImpulseSpeedOnSpindash{};
+        float ImpulseSpeedOnNormal{};
+        float OutOfControl{};
+        bool IsStand{};
+        SJumpBoardExParam::EType Type{};
+        bool IsOn{ true };
+        float ElapsedTime{};
 
     public:
         ObjJumpBoardEx() {}
 
-        void AddCallback(GameDocument& document) override
+        void AddCallback(GameDocument& in_rDocument) override
         {
             fnd::GOComponent::Create<fnd::GOCVisualModel>(*this);
             fnd::GOComponent::Create<game::GOCCollider>(*this);
             fnd::GOComponent::Create<game::GOCPhysics>(*this);
             fnd::GOComponent::Create<game::GOCSound>(*this);
 
-            auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpBoardExInfo>(document, "ObjJumpBoardExInfo");
-            auto* pParam = reinterpret_cast<SJumpBoardExParam*>(m_pAdapter->GetData());
+            auto* pInfo = ObjUtil::GetObjectInfo<ObjJumpBoardExInfo>(in_rDocument);
+            auto* pParam = m_pAdapter->GetData<SJumpBoardExParam>();
 
-            m_ImpulseSpeedOnSpindash = pParam->m_ImpulseSpeedOnSpindash;
-            m_ImpulseSpeedOnNormal = pParam->m_ImpulseSpeedOnNormal;
-            m_OutOfControl = pParam->m_OutOfControl;
-            m_IsStand = pParam->m_IsStand;
-            m_Type = pParam->m_Type;
+            ImpulseSpeedOnSpindash = pParam->ImpulseSpeedOnSpindash;
+            ImpulseSpeedOnNormal = pParam->ImpulseSpeedOnNormal;
+            OutOfControl = pParam->OutOfControl;
+            IsStand = pParam->IsStand;
+            Type = pParam->Type;
 
             fnd::GOComponent::BeginSetup(*this);
 
-            auto* pVisual = GetComponent<fnd::GOCVisualModel>();
-            if (pVisual)
+            if (auto* pVisualGoc = GetComponent<fnd::GOCVisualModel>())
             {
                 fnd::GOCVisualModel::Description description{};
-                description.m_Model = pInfo->m_Models[m_Type];
+                description.m_Model = pInfo->Models[Type];
                 description.field_0C = 1;
 
-                pVisual->Setup(description);
+                pVisualGoc->Setup(description);
 
-                auto* pBlender = pVisual->SetTexSrtBlender({ ObjJumpBoardExInfo::ms_BeltAnimCount + 1 });
-                for (size_t i = 0; i < ObjJumpBoardExInfo::ms_BeltAnimCount; i++)
-                    pBlender->CreateControl({ pInfo->m_BeltAnims[i], 1 });
+                auto* pBlender = pVisualGoc->SetTexSrtBlender({ ms_TextureAnimationCount });
+                for (size_t i = 0; i < ms_TextureAnimationCount - 1; i++)
+                    pBlender->CreateControl({ pInfo->BeltTextureAnimations[i], 1 });
 
-                pBlender->CreateControl({ pInfo->m_ArrowAnim, 1 });
+                pBlender->CreateControl({ pInfo->ArrowTextureAnimation, 1 });
             }
 
-            auto* pCollider = GetComponent<game::GOCCollider>();
-            if (pCollider)
+            if (auto* pColliderGoc = GetComponent<game::GOCCollider>())
             {
-                pCollider->Setup({ 1 });
+                pColliderGoc->Setup({ ms_ShapeCount });
 
-                game::ColliBoxShapeCInfo colliInfo{};
-                colliInfo.m_Size = ms_Sizes[m_Type];
-                colliInfo.m_Unk2 |= 1;
+                game::ColliBoxShapeCInfo collisionInfo{};
+                collisionInfo.m_Size = ms_CollisionSizes[Type];
+                collisionInfo.m_Unk2 |= 1;
 
-                colliInfo.SetLocalPosition(ms_Positions[m_Type]);
-                colliInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_Rotations[m_Type]), Vector3::UnitX()));
+                collisionInfo.SetLocalPosition(ms_CollisionOffsets[Type]);
+                collisionInfo.SetLocalRotation(Eigen::AngleAxisf(TO_RAD(ms_CollisionRotations[Type]), Vector3::UnitX()));
 
-                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, colliInfo);
+                ObjUtil::SetupCollisionFilter(ObjUtil::eFilter_Unk12, collisionInfo);
 
-                pCollider->CreateShape(colliInfo);
+                pColliderGoc->CreateShape(collisionInfo);
             }
 
-            auto* pPhysics = GetComponent<game::GOCPhysics>();
-            if (pPhysics)
+            if (auto* pPhysics = GetComponent<game::GOCPhysics>())
             {
-                pPhysics->Setup({ 1 });
+                pPhysics->Setup({ ms_PhysicsShapeCount });
 
                 game::ColliMeshShapeCInfo colliInfo{};
                 colliInfo.m_Flags = 8;
                 colliInfo.m_Unk2 |= 0x100;
                 colliInfo.m_Unk3 = 3;
-                colliInfo.m_Mesh = pInfo->m_Colliders[m_Type];
+                colliInfo.m_Mesh = pInfo->Collisions[Type];
 
                 pPhysics->CreateShape(colliInfo);
             }
@@ -91,42 +91,40 @@ namespace app
             fnd::GOComponent::EndSetup(*this);
         }
 
-        bool ProcessMessage(fnd::Message& msg) override
+        bool ProcessMessage(fnd::Message& in_rMessage) override
         {
-            if (PreProcessMessage(msg))
+            if (PreProcessMessage(in_rMessage))
                 return true;
 
-            switch (msg.GetType())
+            switch (in_rMessage.GetType())
             {
-            case xgame::MsgHitEventCollision::MessageID:
-                return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(msg));
-            default:
-                return CSetObjectListener::ProcessMessage(msg);
+            case xgame::MsgHitEventCollision::MessageID:        return ProcMsgHitEventCollision(reinterpret_cast<xgame::MsgHitEventCollision&>(in_rMessage));
+            default:                                            return CSetObjectListener::ProcessMessage(in_rMessage);
             }
         }
 
-        void Update(const fnd::SUpdateInfo& rInfo) override
+        void Update(const fnd::SUpdateInfo& in_rUpdateInfo) override
         {
-            if (m_IsOn)
+            if (IsOn)
                 return;
 
-            m_Time += rInfo.deltaTime;
-            if (m_Time >= 0.7f)
+            ElapsedTime += in_rUpdateInfo.deltaTime;
+            if (ElapsedTime >= 0.7f)
             {
                 GetComponent<game::GOCPhysics>()->SetEnable(true);
-                m_Time = 0.0f;
-                m_IsOn = true;
+                ElapsedTime = 0.0f;
+                IsOn = true;
                 return;
             }
         }
 
     private:
-        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& msg)
+        bool ProcMsgHitEventCollision(xgame::MsgHitEventCollision& in_rMessage)
         {
-            if (!m_IsOn)
+            if (!IsOn)
                 return false;
 
-            int playerNo = ObjUtil::GetPlayerNo(*m_pOwnerDocument, msg.m_Sender);
+            int playerNo = ObjUtil::GetPlayerNo(*GetDocument(), in_rMessage.m_Sender);
             if (playerNo < 0)
                 return false;
 
@@ -136,24 +134,25 @@ namespace app
             GetComponent<game::GOCSound>()->Play3D("obj_dashpanel", {}, 0);
             GetComponent<game::GOCPhysics>()->SetEnable(false);
 
-            m_IsOn = false;
+            IsOn = false;
 
-            xgame::MsgGetPosition playerPosMsg{};
+            csl::math::Vector3 playerPosition{};
+            xgame::MsgGetPosition playerPosMsg{ playerPosition };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, playerPosMsg);
             
-            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), m_OutOfControl, 0 };
+            xgame::MsgSpringImpulse impulseMsg{ playerPosMsg.GetPosition(), GetDirectionVector(playerNo), OutOfControl, 0.0f };
             ObjUtil::SendMessageImmToPlayer(*this, playerNo, impulseMsg);
 
             return true;
         }
 
-        bool CheckPlayerVelocity(int playerNo)
+        bool CheckPlayerVelocity(int in_playerNo)
         {
-            if (!m_IsStand)
+            if (!IsStand)
                 return true;
 
-            auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*m_pOwnerDocument, playerNo)));
-            float velocity = pPlayer->m_pPhysics->GetHorzVelocity().dot(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * Vector3::UnitZ());
+            auto* pPlayer = dynamic_cast<Player::CPlayer*>(m_pMessageManager->GetActor(ObjUtil::GetPlayerActorID(*GetDocument(), in_playerNo)));
+            float velocity = pPlayer->m_rpPhysics->GetHorzVelocity().dot(GetComponent<fnd::GOCTransform>()->GetLocalRotation() * csl::math::Vector3::UnitZ());
 
             if (velocity < 100.0f)
                 return false;
@@ -161,23 +160,23 @@ namespace app
             return true;
         }
 
-        Vector3 GetDirectionVector(int playerNo)
+        csl::math::Vector3 GetDirectionVector(int playerNo)
         {
-            int* playerInfo = SLW_EXTRA_OBJECTS::ObjUtil::GetPlayerInformation(*m_pOwnerDocument, playerNo);
-            if (!playerInfo)
+            xgame::PlayerInformation* pPlayerInfo = ObjUtil::GetPlayerInformation(*GetDocument(), playerNo);
+            if (!pPlayerInfo)
                 return {};
 
-            auto direction = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset() * Vector3::UnitZ();
+            auto direction = GetComponent<fnd::GOCTransform>()->GetLocalRotation() * GetLaunchOffset() * csl::math::Vector3::UnitZ();
 
-            if (*((bool*)playerInfo + 368))
-                return static_cast<Vector3>(direction * m_ImpulseSpeedOnSpindash);
+            if (pPlayerInfo->Unk37)
+                return { direction * ImpulseSpeedOnSpindash };
 
-            return static_cast<Vector3>(direction * m_ImpulseSpeedOnNormal);
+            return { direction * ImpulseSpeedOnNormal };
         }
 
-        Quaternion GetLaunchOffset()
+        csl::math::Quaternion GetLaunchOffset()
         {
-            return Eigen::AngleAxisf(TO_RAD(ms_Rotations[m_Type]), Vector3::UnitX());
+            return { Eigen::AngleAxisf(TO_RAD(ms_CollisionRotations[Type]), csl::math::Vector3::UnitX()) };
         }
     };
 }

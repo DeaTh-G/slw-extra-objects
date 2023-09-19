@@ -13,11 +13,11 @@ namespace app
             eType_30Large
         };
 
-        float m_ImpulseSpeedOnSpindash{};
-        float m_ImpulseSpeedOnNormal{};
-        float m_OutOfControl{};
-        bool m_IsStand{};
-        EType m_Type{};
+        float ImpulseSpeedOnSpindash{};
+        float ImpulseSpeedOnNormal{};
+        float OutOfControl{};
+        bool IsStand{};
+        EType Type{};
     };
 
     static void paramMap_JumpBoardEx(SetEd::CResClass rClass)

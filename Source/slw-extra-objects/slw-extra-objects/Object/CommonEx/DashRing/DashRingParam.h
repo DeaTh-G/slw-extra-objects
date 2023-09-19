@@ -11,10 +11,10 @@ namespace app
             eType_Rainbow
         };
 
-        float m_FirstSpeed{};
-        float m_OutOfControl{};
-        float m_KeepVelocityDistance{};
-        EType m_Type{};
+        float FirstSpeed{};
+        float OutOfControl{};
+        float KeepVelocityDistance{};
+        EType Type{};
     };
 
     static void paramMap_DashRing(SetEd::CResClass rClass)

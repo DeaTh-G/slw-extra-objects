@@ -5,12 +5,12 @@ namespace app
 {
     struct SUpReelParam
     {
-        float m_Length{};
-        bool m_IsWaitUp{};
-        bool m_IsOneTimeUp{};
-        float m_ImpulseVelocity{};
-        float m_OutOfControl{};
-        float m_UpSpeedMax{};
+        float Length{};
+        bool IsWaitUp{};
+        bool IsOneTimeUp{};
+        float ImpulseVelocity{};
+        float OutOfControl{};
+        float UpSpeedMax{};
     };
 
     static void paramMap_UpReel(SetEd::CResClass rClass)

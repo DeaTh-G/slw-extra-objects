@@ -11,12 +11,12 @@ namespace app
             eType_Upwards
         };
 
-        float m_FirstSpeed{};
-        float m_KeepVelocityDistance{};
-        float m_OutOfControl{};
-        float m_Pitch{};
-        CSetObjectID m_TargetID{};
-        EType m_Type{};
+        float FirstSpeed{};
+        float KeepVelocityDistance{};
+        float OutOfControl{};
+        float Pitch{};
+        CSetObjectID TargetID{};
+        EType Type{};
     };
 
     static void paramMap_JumpPanel(SetEd::CResClass rClass)

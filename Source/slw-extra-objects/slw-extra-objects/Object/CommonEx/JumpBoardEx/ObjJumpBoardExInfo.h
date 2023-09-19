@@ -5,37 +5,42 @@ namespace app
     class ObjJumpBoardExInfo : public CObjInfo
     {
     private:
-        inline static const char* ms_ModelNames[] = { "cmn_obj_jumpboard_15S", "cmn_obj_jumpboard_30S", "cmn_obj_jumpboard_30M", "cmn_obj_jumpboard_30L" };
-        inline static const char* ms_BeltAnimNames[] = { "cmn_obj_jumpboard_belt-0000", "cmn_obj_jumpboard_belt-0001" };
+        inline static const char* ms_pPackfileName = "CommonObjectEx.pac";
+        inline static const char* ms_pModelNames[] = { "cmn_obj_jumpboard_15S", "cmn_obj_jumpboard_30S", "cmn_obj_jumpboard_30M", "cmn_obj_jumpboard_30L" };
+        inline static const char* ms_pCollisionNames[] = { "cmn_obj_jumpboard_15S", "cmn_obj_jumpboard_30S", "cmn_obj_jumpboard_30M", "cmn_obj_jumpboard_30L" };
+        inline static const char* ms_pBeltAnimationNames[] = { "cmn_obj_jumpboard_belt-0000", "cmn_obj_jumpboard_belt-0001" };
+        inline static const char* ms_pTextureAnimatuionName = "cmn_obj_jumpboard_arrow";
 
     public:
-        inline static size_t ms_ModelCount = ARRAYSIZE(ms_ModelNames);
-        inline static size_t ms_BeltAnimCount = ARRAYSIZE(ms_BeltAnimNames);
+        inline static const char* ms_pName = "ObjJumpBoardExInfo";
 
-        hh::gfx::res::ResModel m_Models[ARRAYSIZE(ms_ModelNames)]{};
-        ResPhysicsMesh m_Colliders[ARRAYSIZE(ms_ModelNames)]{};
-        hh::gfx::res::ResAnimTexSrt m_BeltAnims[ARRAYSIZE(ms_BeltAnimNames)]{};
-        hh::gfx::res::ResAnimTexSrt m_ArrowAnim{};
+        inline static size_t ms_ModelCount = ARRAYSIZE(ms_pModelNames);
+        inline static size_t ms_BeltAnimationCount = ARRAYSIZE(ms_pBeltAnimationNames);
+
+        hh::gfx::res::ResModel Models[ARRAYSIZE(ms_pModelNames)]{};
+        ResPhysicsMesh Collisions[ARRAYSIZE(ms_pModelNames)]{};
+        hh::gfx::res::ResAnimTexSrt BeltTextureAnimations[ARRAYSIZE(ms_pBeltAnimationNames)]{};
+        hh::gfx::res::ResAnimTexSrt ArrowTextureAnimation{};
 
     protected:
-        void Initialize(GameDocument& document) override
+        void Initialize(GameDocument& in_rDocument) override
         {
-            auto packFile = ObjUtil::GetPackFile("CommonObjectEx.pac");
+            auto packFile = ObjUtil::GetPackFile(ms_pPackfileName);
             for (size_t i = 0; i < ms_ModelCount; i++)
             {
-                m_Models[i] = ObjUtil::GetModelResource(ms_ModelNames[i], packFile);
-                m_Colliders[i] = ObjUtil::GetPhysicsMeshResource(ms_ModelNames[i], packFile);
+                Models[i] = ObjUtil::GetModelResource(ms_pModelNames[i], packFile);
+                Collisions[i] = ObjUtil::GetPhysicsMeshResource(ms_pCollisionNames[i], packFile);
             }
 
-            for (size_t i = 0; i < ms_BeltAnimCount; i++)
-                m_BeltAnims[i] = ObjUtil::GetTexSrtAnimationResource(ms_BeltAnimNames[i], packFile);
+            for (size_t i = 0; i < ms_BeltAnimationCount; i++)
+                BeltTextureAnimations[i] = ObjUtil::GetTexSrtAnimationResource(ms_pBeltAnimationNames[i], packFile);
 
-            m_ArrowAnim = ObjUtil::GetTexSrtAnimationResource("cmn_obj_jumpboard_arrow", packFile);
+            ArrowTextureAnimation = ObjUtil::GetTexSrtAnimationResource(ms_pTextureAnimatuionName, packFile);
         }
 
         const char* GetInfoName() override
         {
-            return "ObjJumpBoardExInfo";
+            return ms_pName;
         }
     };
 }
