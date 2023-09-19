@@ -14,7 +14,7 @@ namespace slw_extra_objects
         float KeepVelocityDistance{};
         float OutOfControl{};
         float Pitch{};
-        CSetObjectID TargetID{};
+        app::CSetObjectID TargetID{};
         EType Type{};
     };
 
