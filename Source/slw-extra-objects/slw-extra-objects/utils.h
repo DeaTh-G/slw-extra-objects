@@ -72,6 +72,6 @@
 
 #define WRITE_JUMP(location, function) \
     { \
-        WRITE_MEMORY_WITH_TYPE(location, uint8_t, 0xE9); \
-        WRITE_MEMORY_WITH_TYPE(location + 1, uint32_t, (uint32_t)(function) - (size_t)(location) - 5); \
+        WRITE_MEMORY(location, uint8_t, 0xE9); \
+        WRITE_MEMORY(location + 1, uint32_t, (uint32_t)(function) - (size_t)(location) - 5); \
     }

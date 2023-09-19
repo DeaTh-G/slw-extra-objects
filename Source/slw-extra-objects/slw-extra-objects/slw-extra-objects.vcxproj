@@ -119,7 +119,6 @@
     <ClInclude Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Patches.h" />
-    <ClInclude Include="Patches\Functions.h" />
     <ClInclude Include="Patches\Object\objectObjectReflections.h" />
     <ClInclude Include="Patches\Stage\StageDataInitializer.h" />
     <ClInclude Include="Patches\System\ObjectSystem\SetObjectFactory.h" />
