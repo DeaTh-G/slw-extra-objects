@@ -4,7 +4,7 @@ HOOK(void, __fastcall, InitializeHook, ASLR(0x008F8480), app::Player::SonicInfo*
 {
 	originalInitializeHook(in_pThis, edx, in_rDocument);
 
-	auto* pInfo = app::ObjUtil::GetObjectInfo<app::Player::SonicExInfo>(in_rDocument);
+	auto* pInfo = app::ObjUtil::GetObjectInfo<slw_extra_objects::Player::SonicExInfo>(in_rDocument);
 	if (!pInfo)
 		return;
 	

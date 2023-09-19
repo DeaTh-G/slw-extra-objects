@@ -90,21 +90,29 @@ bool slw_extra_objects::ObjUpReel::ProcessMessage(app::fnd::Message& in_rMessage
 bool slw_extra_objects::ObjUpReel::ProcMsgHitEventCollision(app::xgame::MsgHitEventCollision& in_rMessage)
 {
     TTinyFsm::DispatchFSM(app::TiFsmBasicEvent<ObjUpReel>::CreateMessage(in_rMessage));
+
+    return true;
 }
 
 bool slw_extra_objects::ObjUpReel::ProcMsgPLGetHomingTargetInfo(app::xgame::MsgPLGetHomingTargetInfo& in_rMessage)
 {
     TTinyFsm::DispatchFSM(app::TiFsmBasicEvent<ObjUpReel>::CreateMessage(in_rMessage));
+
+    return true;
 }
 
 bool slw_extra_objects::ObjUpReel::ProcMsgGetExternalMovePosition(app::xgame::MsgGetExternalMovePosition& in_rMessage)
 {
     TTinyFsm::DispatchFSM(app::TiFsmBasicEvent<ObjUpReel>::CreateMessage(in_rMessage));
+
+    return true;
 }
 
 bool slw_extra_objects::ObjUpReel::ProcMsgNotifyObjectEvent(app::xgame::MsgNotifyObjectEvent& in_rMessage)
 {
     TTinyFsm::DispatchFSM(app::TiFsmBasicEvent<ObjUpReel>::CreateMessage(in_rMessage));
+
+    return true;
 }
 
 void slw_extra_objects::ObjUpReel::Update(const app::fnd::SUpdateInfo& in_rUpdateInfo)
@@ -130,7 +138,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
 
         PlayerNo = app::ObjUtil::GetPlayerNo(*GetDocument(), message.m_Sender);
         if (PlayerNo < 0)
-            return;
+            break;
 
         ChangeState(&ObjUpReel::StateUp);
 
@@ -145,7 +153,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
 
         auto* pHandleModel = reinterpret_cast<app::fnd::GOCVisualModel*>(GetComponent<app::fnd::GOCVisualContainer>()->m_Visuals[1]);
         if (!pHandleModel)
-            return;
+            break;
 
         csl::math::Matrix34 handleTransform{};
         pHandleModel->GetMatrix(&handleTransform);
@@ -170,7 +178,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
         auto& message = static_cast<app::xgame::MsgNotifyObjectEvent&>(in_rEvent.getMessage());
 
         if (!message.GetEventType())
-            return;
+            break;
 
         SetExtUserData(eExtUserDataType_High, 1);
         ChangeState(&ObjUpReel::StateDown);
@@ -230,7 +238,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
 
             auto* pHandleModel = reinterpret_cast<app::fnd::GOCVisualModel*>(GetComponent<app::fnd::GOCVisualContainer>()->m_Visuals[1]);
             if (!pHandleModel)
-                return;
+                break;
 
             pHandleModel->GetMatrix(message.pTrsMatrix);
 
@@ -295,7 +303,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
 
             PlayerNo = app::ObjUtil::GetPlayerNo(*GetDocument(), message.m_Sender);
             if (PlayerNo < 0)
-                return;
+                break;
 
             ChangeState(&ObjUpReel::StateUp);
 
@@ -310,7 +318,7 @@ app::TTinyFsm<slw_extra_objects::ObjUpReel>::TiFsmState_t slw_extra_objects::Obj
 
             auto* pHandleModel = reinterpret_cast<app::fnd::GOCVisualModel*>(GetComponent<app::fnd::GOCVisualContainer>()->m_Visuals[1]);
             if (!pHandleModel)
-                return;
+                break;
 
             csl::math::Matrix34 handleTransform{};
             pHandleModel->GetMatrix(&handleTransform);

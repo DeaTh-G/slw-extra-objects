@@ -5,7 +5,7 @@ HOOK(void, __cdecl, RegisterResourceHook, ASLR(0x008FE300), app::Player::CPlayer
 {
 	originalRegisterResourceHook(in_rPlayer, in_rRefHolderGoc, in_unk, in_isZelda);
 
-	auto* pInfo = app::ObjUtil::GetObjectInfo<app::Player::SonicExInfo>(*in_rPlayer.GetDocument());
+	auto* pInfo = app::ObjUtil::GetObjectInfo<slw_extra_objects::Player::SonicExInfo>(*in_rPlayer.GetDocument());
 	if (!pInfo)
 		return;
 
