@@ -159,6 +159,30 @@
     <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanelInfo.h">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
     </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuper.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReel.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReelInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\UpReel\UpReelParam.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpring.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpringInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\WideSpring\WideSpringParam.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -214,6 +238,36 @@
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanel.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanelInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuper.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\UpReelParam.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReel.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReelInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\WideSpringParam.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpringInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpring.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
