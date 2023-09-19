@@ -21,13 +21,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -56,7 +56,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);F:\Source Codes\slw-extra-objects\Depends\LWAPI\Sonic2013;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
@@ -80,7 +80,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);F:\Source Codes\slw-extra-objects\Depends\LWAPI\Sonic2013;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
@@ -97,37 +97,51 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Expanded.h" />
+    <ClInclude Include="Expanded\Object\Objects.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanel.h" />
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanelInfo.h" />
+    <ClInclude Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Object\CommonEx\DashRing\DashRingParam.h" />
-    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRing.h" />
-    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRingInfo.h" />
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\JumpBoardExParam.h" />
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardEx.h" />
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.h" />
-    <ClInclude Include="Object\CommonEx\JumpPanel\JumpPanelParam.h" />
-    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanel.h" />
-    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanelInfo.h" />
-    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuper.h" />
-    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.h" />
-    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReel.h" />
-    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReelInfo.h" />
-    <ClInclude Include="Object\CommonEx\UpReel\UpReelParam.h" />
-    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpring.h" />
-    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpringInfo.h" />
-    <ClInclude Include="Object\CommonEx\WideSpring\WideSpringParam.h" />
+    <ClInclude Include="Patches.h" />
     <ClInclude Include="Patches\Functions.h" />
-    <ClInclude Include="Patches\Patches.h" />
+    <ClInclude Include="Patches\Object\objectObjectReflections.h" />
+    <ClInclude Include="Patches\Stage\StageDataInitializer.h" />
+    <ClInclude Include="Patches\System\ObjectSystem\SetObjectFactory.h" />
+    <ClInclude Include="Patches\System\Player\Info\PlayerVisualSonicInfo.h" />
+    <ClInclude Include="Patches\System\Player\PlayerResourceInfoRegister.h" />
+    <ClInclude Include="Patches\System\Player\PlayerStateBase.h" />
+    <ClInclude Include="Patches\System\Player\State\StateCaught.h" />
+    <ClInclude Include="Patches\System\Player\VisualSonic.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Player\Info\SonicExInfo.h" />
     <ClInclude Include="slw-extra-objects.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.cpp" />
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.cpp" />
+    <ClCompile Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.cpp" />
     <ClCompile Include="Mod.cpp" />
-    <ClCompile Include="Patches\CSetObjectFactory.cpp" />
-    <ClCompile Include="Patches\CStateBase.cpp" />
-    <ClCompile Include="Patches\SonicInfo.cpp" />
-    <ClCompile Include="Patches\StageDataInitializer.cpp" />
+    <ClCompile Include="Patches\CHudGameMainDisplay.cpp" />
+    <ClCompile Include="Patches\Stage\StageDataInitializer.cpp" />
+    <ClCompile Include="Patches\System\ObjectSystem\SetObjectFactory.cpp" />
+    <ClCompile Include="Patches\System\Player\Info\PlayerVisualSonicInfo.cpp" />
+    <ClCompile Include="Patches\System\Player\PlayerResourceInfoRegister.cpp" />
+    <ClCompile Include="Patches\System\Player\PlayerStateBase.cpp" />
+    <ClCompile Include="Patches\System\Player\State\StateCaught.cpp" />
+    <ClCompile Include="Patches\System\Player\VisualSonic.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

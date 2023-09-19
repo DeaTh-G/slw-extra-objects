@@ -13,41 +13,71 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Object">
-      <UniqueIdentifier>{eae0d5c1-44d7-4037-9600-6fc0fe3e8fbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object\CommonEx">
-      <UniqueIdentifier>{b8d12612-84c3-4851-8564-b33bb793422f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object\CommonEx\DashRing">
-      <UniqueIdentifier>{6067c154-c96d-40ea-ae8e-1778f7bdc53f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object\CommonEx\JumpPanel">
-      <UniqueIdentifier>{25d60863-47ba-4839-8fef-d28c25b41f9a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object\CommonEx\SuperRingSuper">
-      <UniqueIdentifier>{02febae8-6713-48c2-b739-58a73ff2efa2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Object\CommonEx\JumpBoardEx">
-      <UniqueIdentifier>{40fd3cfc-a0a1-4f46-86b4-6202fab84055}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Patches">
       <UniqueIdentifier>{ac961f53-a58e-40a4-a640-08d9e5acf556}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Patches">
       <UniqueIdentifier>{97159d42-e4a2-4397-adcb-219a7f1df976}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Object\CommonEx\WideSpring">
-      <UniqueIdentifier>{38e200e2-2626-4451-80f5-e0fd1330d975}</UniqueIdentifier>
+    <Filter Include="Source Files\Patches\System">
+      <UniqueIdentifier>{149e48d7-d640-4e52-bf55-a90a3041aa2b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Object\CommonEx\UpReel">
+    <Filter Include="Source Files\Patches\System\Player">
+      <UniqueIdentifier>{1f6a5845-35a2-4d47-896e-f7dbeaf0a322}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches\System\Player\Info">
+      <UniqueIdentifier>{c7e34275-83d5-4dba-bba8-113ec4d5397f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches\Object">
+      <UniqueIdentifier>{a37db359-7587-416b-9444-becf94ebd825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches\System\ObjectSystem">
+      <UniqueIdentifier>{792cb64b-042a-409e-b7b7-a3265c45edd7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches\System\Player\State">
+      <UniqueIdentifier>{72017af3-33f7-41a6-93c9-4c578d670430}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Patches\Stage">
+      <UniqueIdentifier>{846bbd43-b1b9-44e3-89bc-0f8cd33ce49f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded">
+      <UniqueIdentifier>{b2d15fb2-380c-4133-963f-0205e656fe9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\System">
+      <UniqueIdentifier>{c173c71b-172a-45bf-927f-90babb0205cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\System\Player">
+      <UniqueIdentifier>{7061ab5a-a54f-44d3-80da-bc56e4da9b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\System\Player\Info">
+      <UniqueIdentifier>{34052644-2eed-46a3-ada9-08ebb753c2d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object">
+      <UniqueIdentifier>{cb848a3d-46d2-476c-a266-5aa2b4a0a843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage">
+      <UniqueIdentifier>{0b419c89-1d8a-4b6b-a6a7-47a265322780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx">
+      <UniqueIdentifier>{6351b180-c365-42f9-8ea1-d54bc9b2f0ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\UpReel">
       <UniqueIdentifier>{dfd46ed4-2967-44b7-8637-3d7af7ada4a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Player">
-      <UniqueIdentifier>{1dbeaeeb-a197-47cd-9b77-e681710562b6}</UniqueIdentifier>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx">
+      <UniqueIdentifier>{40fd3cfc-a0a1-4f46-86b4-6202fab84055}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Player\Info">
-      <UniqueIdentifier>{5c0d27e9-c980-40a4-be04-35a7104da27f}</UniqueIdentifier>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\JumpPanel">
+      <UniqueIdentifier>{25d60863-47ba-4839-8fef-d28c25b41f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper">
+      <UniqueIdentifier>{02febae8-6713-48c2-b739-58a73ff2efa2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\WideSpring">
+      <UniqueIdentifier>{38e200e2-2626-4451-80f5-e0fd1330d975}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Expanded\Object\Stage\CommonEx\DashRing">
+      <UniqueIdentifier>{6067c154-c96d-40ea-ae8e-1778f7bdc53f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -56,42 +86,6 @@
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\DashRing\DashRingParam.h">
-      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRingInfo.h">
-      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\DashRing\ObjDashRing.h">
-      <Filter>Header Files\Object\CommonEx\DashRing</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanelInfo.h">
-      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpPanel\JumpPanelParam.h">
-      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpPanel\ObjJumpPanel.h">
-      <Filter>Header Files\Object\CommonEx\JumpPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuper.h">
-      <Filter>Header Files\Object\CommonEx\SuperRingSuper</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.h">
-      <Filter>Header Files\Object\CommonEx\SuperRingSuper</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardEx.h">
-      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\JumpBoardExParam.h">
-      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.h">
-      <Filter>Header Files\Object\CommonEx\JumpBoardEx</Filter>
-    </ClInclude>
-    <ClInclude Include="Patches\Patches.h">
-      <Filter>Header Files\Patches</Filter>
     </ClInclude>
     <ClInclude Include="Patches\Functions.h">
       <Filter>Header Files\Patches</Filter>
@@ -102,26 +96,68 @@
     <ClInclude Include="slw-extra-objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpring.h">
-      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    <ClInclude Include="Patches\System\Player\Info\PlayerVisualSonicInfo.h">
+      <Filter>Source Files\Patches\System\Player\Info</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\WideSpring\ObjWideSpringInfo.h">
-      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    <ClInclude Include="Patches.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\WideSpring\WideSpringParam.h">
-      <Filter>Header Files\Object\CommonEx\WideSpring</Filter>
+    <ClInclude Include="Patches\System\Player\PlayerResourceInfoRegister.h">
+      <Filter>Source Files\Patches\System\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReel.h">
-      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
+    <ClInclude Include="Patches\System\Player\PlayerStateBase.h">
+      <Filter>Source Files\Patches\System\Player</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\UpReel\ObjUpReelInfo.h">
-      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
+    <ClInclude Include="Patches\Object\objectObjectReflections.h">
+      <Filter>Source Files\Patches\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object\CommonEx\UpReel\UpReelParam.h">
-      <Filter>Header Files\Object\CommonEx\UpReel</Filter>
+    <ClInclude Include="Patches\System\ObjectSystem\SetObjectFactory.h">
+      <Filter>Source Files\Patches\System\ObjectSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Player\Info\SonicExInfo.h">
-      <Filter>Header Files\Player\Info</Filter>
+    <ClInclude Include="Patches\System\Player\VisualSonic.h">
+      <Filter>Source Files\Patches\System\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\System\Player\State\StateCaught.h">
+      <Filter>Source Files\Patches\System\Player\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Patches\Stage\StageDataInitializer.h">
+      <Filter>Source Files\Patches\Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.h">
+      <Filter>Source Files\Expanded\System\Player\Info</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Objects.h">
+      <Filter>Source Files\Expanded\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanel.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanelInfo.h">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -131,17 +167,53 @@
     <ClCompile Include="Mod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Patches\CStateBase.cpp">
+    <ClCompile Include="Patches\CHudGameMainDisplay.cpp">
       <Filter>Source Files\Patches</Filter>
     </ClCompile>
-    <ClCompile Include="Patches\CSetObjectFactory.cpp">
-      <Filter>Source Files\Patches</Filter>
+    <ClCompile Include="Patches\System\Player\Info\PlayerVisualSonicInfo.cpp">
+      <Filter>Source Files\Patches\System\Player\Info</Filter>
     </ClCompile>
-    <ClCompile Include="Patches\StageDataInitializer.cpp">
-      <Filter>Source Files\Patches</Filter>
+    <ClCompile Include="Patches\System\Player\PlayerResourceInfoRegister.cpp">
+      <Filter>Source Files\Patches\System\Player</Filter>
     </ClCompile>
-    <ClCompile Include="Patches\SonicInfo.cpp">
-      <Filter>Source Files\Patches</Filter>
+    <ClCompile Include="Patches\System\Player\PlayerStateBase.cpp">
+      <Filter>Source Files\Patches\System\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\System\ObjectSystem\SetObjectFactory.cpp">
+      <Filter>Source Files\Patches\System\ObjectSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\System\Player\VisualSonic.cpp">
+      <Filter>Source Files\Patches\System\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\System\Player\State\StateCaught.cpp">
+      <Filter>Source Files\Patches\System\Player\State</Filter>
+    </ClCompile>
+    <ClCompile Include="Patches\Stage\StageDataInitializer.cpp">
+      <Filter>Source Files\Patches\Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.cpp">
+      <Filter>Source Files\Expanded\System\Player\Info</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
+    </ClCompile>
+    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.cpp">
+      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
