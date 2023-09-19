@@ -133,23 +133,18 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.cpp" />
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.cpp" />
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanel.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanelInfo.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuper.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReel.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReelInfo.cpp" />
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\UpReelParam.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpring.cpp" />
     <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpringInfo.cpp" />
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\WideSpringParam.cpp" />
     <ClCompile Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.cpp" />
     <ClCompile Include="Mod.cpp" />
     <ClCompile Include="Patches\CHudGameMainDisplay.cpp" />

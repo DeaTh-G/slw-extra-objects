@@ -218,26 +218,17 @@
     <ClCompile Include="Expanded\System\Player\Info\PlayerVisualSonicExInfo.cpp">
       <Filter>Source Files\Expanded\System\Player\Info</Filter>
     </ClCompile>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\DashRingParam.cpp">
-      <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
-    </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRing.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\DashRing\ObjDashRingInfo.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\DashRing</Filter>
     </ClCompile>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\JumpBoardExParam.cpp">
-      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
-    </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardEx.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpBoardEx\ObjJumpBoardExInfo.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpBoardEx</Filter>
-    </ClCompile>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\JumpPanelParam.cpp">
-      <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\JumpPanel\ObjJumpPanel.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\JumpPanel</Filter>
@@ -251,17 +242,11 @@
     <ClCompile Include="Expanded\Object\Stage\CommonEx\SuperRingSuper\ObjSuperRingSuperInfo.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\SuperRingSuper</Filter>
     </ClCompile>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\UpReelParam.cpp">
-      <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
-    </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReel.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\UpReel\ObjUpReelInfo.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\UpReel</Filter>
-    </ClCompile>
-    <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\WideSpringParam.cpp">
-      <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
     </ClCompile>
     <ClCompile Include="Expanded\Object\Stage\CommonEx\WideSpring\ObjWideSpringInfo.cpp">
       <Filter>Source Files\Expanded\Object\Stage\CommonEx\WideSpring</Filter>
